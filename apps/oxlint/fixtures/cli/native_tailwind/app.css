@@ -1,0 +1,7 @@
+@theme {
+  --color-brand: oklch(62% 0.18 250);
+}
+
+@utility tab-* {
+  tab-size: --value(integer);
+}

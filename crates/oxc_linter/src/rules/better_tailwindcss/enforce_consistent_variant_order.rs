@@ -1,7 +1,6 @@
 use oxc_ast::AstKind;
 use oxc_diagnostics::OxcDiagnostic;
 use oxc_macros::declare_oxc_lint;
-use rustc_hash::FxHashMap;
 
 use crate::{
     AstNode, LintContext,
@@ -38,12 +37,8 @@ impl Rule for EnforceConsistentVariantOrder {
         if !classes.iter().any(|class| class.name.matches(':').count() > 1) {
             return;
         }
-        let names = classes.iter().map(|class| class.name).collect::<Vec<_>>();
-        let Some(orders): Option<FxHashMap<String, u32>> =
-            ctx.tailwind_query("variantOrder", &names, serde_json::json!({}))
-        else {
-            return;
-        };
+        let Some(design) = ctx.tailwind_design_system() else { return };
+        let orders = design.variant_order(classes.iter().map(|class| class.name));
 
         for class in classes {
             let (mut variants, utility) = tailwind_variants(class.name);
@@ -107,9 +102,6 @@ fn test() {
         pass,
         fail,
     )
-    .with_tailwind_design_system(|_| {
-        Ok(serde_json::json!({ "dark": 1073741825_u32, "hover": 2 }).to_string())
-    })
     .expect_fix(fix)
     .test_and_snapshot();
 }

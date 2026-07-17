@@ -45,11 +45,20 @@ impl Rule for NoConflictingClasses {
             return;
         }
         let names = classes.iter().map(|class| class.name).collect::<Vec<_>>();
-        let Some(conflicts): Option<Conflicts> =
-            ctx.tailwind_query("conflictingClasses", &names, serde_json::json!({}))
-        else {
-            return;
-        };
+        let Some(design) = ctx.tailwind_design_system() else { return };
+        let mut conflicts: Conflicts = FxHashMap::default();
+        for conflict in design.conflicting_classes(&names) {
+            conflicts.entry(conflict.class_name.to_string()).or_default().insert(
+                conflict.conflicting_class_name.to_string(),
+                conflict
+                    .properties
+                    .into_iter()
+                    .map(|property| Property {
+                        css_property_name: property.css_property_name.to_string(),
+                    })
+                    .collect(),
+            );
+        }
         for class in classes {
             let Some(class_conflicts) = conflicts.get(class.name) else { continue };
             if class_conflicts.is_empty() {
@@ -90,20 +99,18 @@ fn test() {
     Tester::new(
         NoConflictingClasses::NAME,
         NoConflictingClasses::PLUGIN,
-        vec![r#"<div className="p-2 text-sm" />"#],
-        vec![r#"<div className="p-2 p-4" />"#],
+        vec![
+            r#"<div className="p-2 text-sm" />"#,
+            r#"<div className="scale-x-90 scale-y-90 brightness-75 contrast-75" />"#,
+            r#"<div className="border-2 border-red-500 scroll-p-2 scroll-px-2" />"#,
+        ],
+        vec![
+            r#"<div className="p-2 p-4" />"#,
+            r#"<div className="scale-x-90 scale-x-95" />"#,
+            r#"<div className="brightness-75 brightness-100" />"#,
+            r#"<div className="placeholder-red-500 placeholder-red-500/50" />"#,
+            r#"<div className="scroll-p-2 scroll-p-4" />"#,
+        ],
     )
-    .with_tailwind_design_system(|request| {
-        let request: serde_json::Value = serde_json::from_str(&request).unwrap();
-        let result = if request["classes"].as_array().unwrap().iter().any(|v| v == "p-4") {
-            serde_json::json!({
-                "p-2": { "p-4": [{ "cssPropertyName": "padding", "important": false }] },
-                "p-4": { "p-2": [{ "cssPropertyName": "padding", "important": false }] }
-            })
-        } else {
-            serde_json::json!({})
-        };
-        Ok(serde_json::to_string(&result).unwrap())
-    })
     .test_and_snapshot();
 }

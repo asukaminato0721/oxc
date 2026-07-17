@@ -81,11 +81,6 @@ pub type JsSetupRuleConfigsCb = ThreadsafeFunction<
     false,
 >;
 
-/// JS callback for project-resolved Tailwind design-system operations.
-#[napi]
-pub type JsTailwindDesignSystemCb =
-    ThreadsafeFunction<String, Promise<String>, String, Status, false>;
-
 /// JS callback to create a workspace.
 #[napi]
 pub type JsCreateWorkspaceCb = ThreadsafeFunction<
@@ -141,7 +136,6 @@ pub type JsLoadJsConfigsCb = ThreadsafeFunction<
 /// 5. `create_workspace`: Create a workspace.
 /// 6. `destroy_workspace`: Destroy a workspace.
 /// 7. `load_js_configs`: Load JavaScript config files.
-/// 8. `tailwind_design_system`: Execute a Tailwind design-system operation.
 ///
 /// Returns `true` if linting succeeded without errors, `false` otherwise.
 #[expect(clippy::allow_attributes)]
@@ -155,7 +149,6 @@ pub async fn lint(
     create_workspace: JsCreateWorkspaceCb,
     destroy_workspace: JsDestroyWorkspaceCb,
     load_js_configs: JsLoadJsConfigsCb,
-    tailwind_design_system: JsTailwindDesignSystemCb,
 ) -> bool {
     lint_impl(
         args,
@@ -165,7 +158,6 @@ pub async fn lint(
         create_workspace,
         destroy_workspace,
         load_js_configs,
-        tailwind_design_system,
     )
     .await
     .report()
@@ -181,7 +173,6 @@ async fn lint_impl(
     create_workspace: JsCreateWorkspaceCb,
     destroy_workspace: JsDestroyWorkspaceCb,
     load_js_configs: JsLoadJsConfigsCb,
-    tailwind_design_system: JsTailwindDesignSystemCb,
 ) -> CliRunResult {
     // Convert String args to OsString for compatibility with bpaf
     let args: Vec<std::ffi::OsString> = args.into_iter().map(std::ffi::OsString::from).collect();
@@ -214,20 +205,18 @@ async fn lint_impl(
             lint_file,
             create_workspace,
             destroy_workspace,
-            tailwind_design_system,
         ));
         (external_linter, js_config_loader)
     };
     #[cfg(not(all(target_pointer_width = "64", target_endian = "little")))]
     let (external_linter, js_config_loader) = {
-        let (_, _, _, _, _, _, _) = (
+        let (_, _, _, _, _, _) = (
             load_plugin,
             setup_rule_configs,
             lint_file,
             create_workspace,
             destroy_workspace,
             load_js_configs,
-            tailwind_design_system,
         );
         (None, None)
     };

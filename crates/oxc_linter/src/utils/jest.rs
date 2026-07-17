@@ -381,6 +381,8 @@ mod test {
                 LintOptions::default(),
                 Arc::default(),
                 None,
+                Arc::default(),
+                None,
             ))
             .spawn_for_test()
         };

@@ -8,3 +8,31 @@ source: crates/oxc_linter/src/tester.rs
    ·                 ──────────────
    ╰────
   help: Replace `[display:flex]` with `flex`.
+
+  ⚠ better_tailwindcss(enforce-canonical-classes): The class: "[&:focus]:flex" can be simplified to "focus:flex".
+   ╭─[enforce_canonical_classes.tsx:1:17]
+ 1 │ <div className="[&:focus]:flex data-[selected]:flex" />
+   ·                 ──────────────
+   ╰────
+  help: Replace `[&:focus]:flex` with `focus:flex`.
+
+  ⚠ better_tailwindcss(enforce-canonical-classes): The class: "data-[selected]:flex" can be simplified to "data-selected:flex".
+   ╭─[enforce_canonical_classes.tsx:1:32]
+ 1 │ <div className="[&:focus]:flex data-[selected]:flex" />
+   ·                                ────────────────────
+   ╰────
+  help: Replace `data-[selected]:flex` with `data-selected:flex`.
+
+  ⚠ better_tailwindcss(enforce-canonical-classes): The class: "[&:nth-child(2)]:flex" can be simplified to "nth-2:flex".
+   ╭─[enforce_canonical_classes.tsx:1:17]
+ 1 │ <div className="[&:nth-child(2)]:flex [@media(pointer:fine)]:flex" />
+   ·                 ─────────────────────
+   ╰────
+  help: Replace `[&:nth-child(2)]:flex` with `nth-2:flex`.
+
+  ⚠ better_tailwindcss(enforce-canonical-classes): The class: "[@media(pointer:fine)]:flex" can be simplified to "pointer-fine:flex".
+   ╭─[enforce_canonical_classes.tsx:1:39]
+ 1 │ <div className="[&:nth-child(2)]:flex [@media(pointer:fine)]:flex" />
+   ·                                       ───────────────────────────
+   ╰────
+  help: Replace `[@media(pointer:fine)]:flex` with `pointer-fine:flex`.

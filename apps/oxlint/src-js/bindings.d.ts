@@ -75,10 +75,6 @@ export type JsLoadPluginCb =
 export type JsSetupRuleConfigsCb =
   ((arg: string) => string | null)
 
-/** JS callback for project-resolved Tailwind design-system operations. */
-export type JsTailwindDesignSystemCb =
-  ((arg: string) => Promise<string>)
-
 /**
  * NAPI entry point.
  *
@@ -90,11 +86,10 @@ export type JsTailwindDesignSystemCb =
  * 5. `create_workspace`: Create a workspace.
  * 6. `destroy_workspace`: Destroy a workspace.
  * 7. `load_js_configs`: Load JavaScript config files.
- * 8. `tailwind_design_system`: Execute a Tailwind design-system operation.
  *
  * Returns `true` if linting succeeded without errors, `false` otherwise.
  */
-export declare function lint(args: Array<string>, loadPlugin: JsLoadPluginCb, setupRuleConfigs: JsSetupRuleConfigsCb, lintFile: JsLintFileCb, createWorkspace: JsCreateWorkspaceCb, destroyWorkspace: JsDestroyWorkspaceCb, loadJsConfigs: JsLoadJsConfigsCb, tailwindDesignSystem: JsTailwindDesignSystemCb): Promise<boolean>
+export declare function lint(args: Array<string>, loadPlugin: JsLoadPluginCb, setupRuleConfigs: JsSetupRuleConfigsCb, lintFile: JsLintFileCb, createWorkspace: JsCreateWorkspaceCb, destroyWorkspace: JsDestroyWorkspaceCb, loadJsConfigs: JsLoadJsConfigsCb): Promise<boolean>
 
 /**
  * Parse AST into provided `Uint8Array` buffer, synchronously.

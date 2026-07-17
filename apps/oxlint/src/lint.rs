@@ -353,11 +353,8 @@ impl CliRunner {
             );
         }
 
-        let use_tailwind_design_system = lint_config.plugins().has_better_tailwindcss()
-            || nested_configs.values().any(|config| config.plugins().has_better_tailwindcss());
-        // Keep the JavaScript bridge for native Tailwind rules even when no JS plugin rules run.
         let mut external_linter = self.external_linter;
-        if external_plugin_store.is_empty() && !use_tailwind_design_system {
+        if external_plugin_store.is_empty() {
             external_linter = None;
         }
 
@@ -1165,6 +1162,26 @@ mod test {
             "fixtures/cli/eslintrc_vitest_replace/foo.test.js",
         ];
         Tester::new().test_and_snapshot(args);
+    }
+
+    #[test]
+    fn test_native_tailwind_design_system() {
+        let output =
+            Tester::new().with_cwd("fixtures/cli/native_tailwind".into()).test_output_verbose(&[]);
+
+        assert!(output.contains("definitely-unknown"));
+        assert_eq!(output.matches("Unknown class detected:").count(), 1);
+        assert!(output.contains("Found 0 warnings and 1 error."));
+    }
+
+    #[test]
+    fn test_native_tailwind_load_error() {
+        let output = Tester::new()
+            .with_cwd("fixtures/cli/native_tailwind".into())
+            .test_output_verbose(&["-c", "broken.json", "test.jsx"]);
+
+        assert_eq!(output.matches("Failed to load Tailwind CSS design system:").count(), 1);
+        assert!(output.contains("missing.css"));
     }
 
     #[test]

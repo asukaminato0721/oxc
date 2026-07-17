@@ -16,11 +16,13 @@ use crate::{
 #[serde(rename_all = "camelCase", default, deny_unknown_fields)]
 pub struct NoUnknownClassesConfig {
     ignore: Vec<CompactStr>,
+    detect_component_classes: bool,
 }
 
 #[derive(Debug, Default, Clone)]
 struct NoUnknownClassesOptions {
     ignore: Vec<Regex>,
+    detect_component_classes: bool,
 }
 
 #[derive(Debug, Default, Clone)]
@@ -47,7 +49,10 @@ impl Rule for NoUnknownClasses {
             .into_iter()
             .map(|pattern| Regex::new(&pattern).map_err(serde::de::Error::custom))
             .collect::<Result<Vec<_>, _>>()?;
-        Ok(Self(Box::new(NoUnknownClassesOptions { ignore })))
+        Ok(Self(Box::new(NoUnknownClassesOptions {
+            ignore,
+            detect_component_classes: config.detect_component_classes,
+        })))
     }
 
     fn run<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
@@ -61,15 +66,12 @@ impl Rule for NoUnknownClasses {
         if classes.is_empty() {
             return;
         }
-        let names = classes.iter().map(|class| class.name).collect::<Vec<_>>();
-        let Some(unknown): Option<Vec<String>> =
-            ctx.tailwind_query("unknownClasses", &names, serde_json::json!({}))
-        else {
-            return;
-        };
+        let Some(design) = ctx.tailwind_design_system() else { return };
+        let unknown = design.unknown_classes(classes.iter().map(|class| class.name));
         for class in classes {
-            if !unknown.iter().any(|unknown| unknown == class.name)
+            if !unknown.contains(&class.name)
                 || self.0.ignore.iter().any(|pattern| pattern.is_match(class.name))
+                || self.0.detect_component_classes && design.has_component_class(class.name)
                 || is_marker_class(class.name)
             {
                 continue;
@@ -91,19 +93,14 @@ fn is_marker_class(class_name: &str) -> bool {
 fn test() {
     use crate::tester::Tester;
 
-    let pass = vec![r#"<div className="flex group peer/name" />"#];
-    let fail = vec![r#"<div className="flex typo-class" />"#];
-    Tester::new(NoUnknownClasses::NAME, NoUnknownClasses::PLUGIN, pass, fail)
-        .with_tailwind_design_system(|request| {
-            let request: serde_json::Value = serde_json::from_str(&request).unwrap();
-            let unknown = request["classes"]
-                .as_array()
-                .unwrap()
-                .iter()
-                .filter(|class| class.as_str() == Some("typo-class"))
-                .cloned()
-                .collect::<Vec<_>>();
-            Ok(serde_json::to_string(&unknown).unwrap())
-        })
-        .test_and_snapshot();
+    let pass = vec![
+        r#"<div className="flex group peer/name" />"#,
+        r#"<div className="scale-x-95 scroll-p-2 bg-left-bottom decoration-clone" />"#,
+        r#"<div className="data-selected:flex nth-2:flex pointer-fine:flex" />"#,
+    ];
+    let fail = vec![
+        r#"<div className="flex typo-class" />"#,
+        r#"<div className="p-1.1 grid-cols-0 bg-red-500/50/25" />"#,
+    ];
+    Tester::new(NoUnknownClasses::NAME, NoUnknownClasses::PLUGIN, pass, fail).test_and_snapshot();
 }

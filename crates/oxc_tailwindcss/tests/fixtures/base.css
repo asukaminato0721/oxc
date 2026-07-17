@@ -1,0 +1,30 @@
+@theme {
+  --color-red-500: oklch(63.7% 0.237 25.331);
+  --color-white: #fff;
+  --color-brand-purple: #3f3cbb;
+  --spacing: 0.25rem;
+  --container-md: 28rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --font-sans: ui-sans-serif, system-ui, sans-serif;
+  --font-weight-thin: 100;
+  --font-weight-normal: 400;
+  --tracking-wide: 0.025em;
+  --leading-none: 1;
+  --leading-relaxed: 1.625;
+  --radius-lg: 0.5rem;
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --drop-shadow-md: 0 3px 3px rgb(0 0 0 / 0.12);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --animate-spin: spin 1s linear infinite;
+  --blur-sm: 8px;
+  --perspective-near: 300px;
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+}
+
+@custom-variant print-only (@media print);
+@custom-variant hocus (&:is(:hover, :focus));
+@custom-variant dark (&:where(.dark, .dark *));

@@ -11,16 +11,6 @@ let createWorkspace: typeof import("./workspace/index.ts").createWorkspace | nul
 let destroyWorkspace: typeof import("./workspace/index.ts").destroyWorkspace | null = null;
 // Lazy-loaded JS/TS config loader (experimental)
 let resolvedConfigLoader: import("./js_config.ts").ConfigLoader | null = null;
-let queryTailwindDesignSystem: typeof import("./tailwindcss.ts").queryTailwindDesignSystem | null =
-  null;
-
-async function queryTailwindDesignSystemWrapper(request: string): Promise<string> {
-  if (queryTailwindDesignSystem === null) {
-    ({ queryTailwindDesignSystem } = await import("./tailwindcss.ts"));
-  }
-  return queryTailwindDesignSystem(request);
-}
-
 /**
  * Load a plugin.
  *
@@ -63,8 +53,7 @@ function loadPluginWrapper(
  * @returns `null` if success, or error message string
  */
 function setupRuleConfigsWrapper(optionsJSON: string): string | null {
-  // An ExternalLinter may exist only to service native Tailwind rules. In that
-  // case no JS plugin was loaded, and there are no JS rule options to set up.
+  // No JS plugin was loaded, so there are no JS rule options to set up.
   if (setupRuleConfigs === null) return null;
   return setupRuleConfigs(optionsJSON);
 }
@@ -201,7 +190,6 @@ const success = await lint(
   createWorkspaceWrapper,
   destroyWorkspaceWrapper,
   loadJsConfigsWrapper,
-  queryTailwindDesignSystemWrapper,
 );
 
 // Note: It's recommended to set `process.exitCode` instead of calling `process.exit()`.

@@ -205,7 +205,7 @@ impl RuntimeFileSystem for OsFileSystem {
 }
 
 impl Runtime {
-    pub(super) fn new(linter: Linter, options: LintServiceOptions) -> Self {
+    pub(super) fn new(mut linter: Linter, options: LintServiceOptions) -> Self {
         // If global thread pool wasn't already initialized, do it now.
         // This "locks" config for the thread pool, which ensures `rayon::current_num_threads()`
         // cannot change from now on.
@@ -225,6 +225,7 @@ impl Runtime {
         // That just means the config (and so number of threads) is already locked.
         // https://docs.rs/rayon/1.11.0/rayon/struct.ThreadPoolBuilder.html#method.build_global
         let _ = rayon::ThreadPoolBuilder::new().build_global();
+        linter.set_tailwind_cwd(options.cwd.clone());
 
         let thread_count = rayon::current_num_threads();
 

@@ -106,10 +106,8 @@ impl Rule for EnforceLogicalProperties {
                 candidates.extend(bases.into_iter().map(|base| parsed.replace_base(&base)));
             }
         }
-        let candidate_refs = candidates.iter().map(String::as_str).collect::<Vec<_>>();
-        let unknown: Vec<String> = ctx
-            .tailwind_query("unknownClasses", &candidate_refs, serde_json::json!({}))
-            .unwrap_or(candidate_refs.iter().map(|value| (*value).to_owned()).collect());
+        let Some(design) = ctx.tailwind_design_system() else { return };
+        let unknown = design.unknown_classes(candidates.iter().map(String::as_str));
 
         for class in classes {
             if self.0.ignore.iter().any(|pattern| pattern.is_match(class.name)) {
@@ -119,7 +117,7 @@ impl Rule for EnforceLogicalProperties {
             let Some(bases) = logical_bases(parsed.base) else { continue };
             let replacements =
                 bases.into_iter().map(|base| parsed.replace_base(&base)).collect::<Vec<_>>();
-            if replacements.iter().any(|replacement| unknown.contains(replacement)) {
+            if replacements.iter().any(|replacement| unknown.contains(&replacement.as_str())) {
                 continue;
             }
             let replacement = replacements.join(" ");
@@ -177,7 +175,6 @@ fn test() {
         r#"<div className="ms-2 block-4 inline-4" />"#,
     )];
     Tester::new(EnforceLogicalProperties::NAME, EnforceLogicalProperties::PLUGIN, pass, fail)
-        .with_tailwind_design_system(|_| Ok("[]".to_owned()))
         .expect_fix(fix)
         .test_and_snapshot();
 }

@@ -159,14 +159,13 @@ impl ServerLinterBuilder {
         let use_tailwind_design_system = config_builder.plugins().has_better_tailwindcss()
             || (use_nested_config
                 && nested_configs.values().any(|config| config.plugins().has_better_tailwindcss()));
-
         extended_paths.extend(config_builder.extended_paths.clone());
         let base_config = config_builder.build(&mut external_plugin_store).unwrap_or_else(|err| {
             warn!("Failed to build config: {err}");
             ConfigStoreBuilder::empty().build(&mut ExternalPluginStore::new(false)).unwrap()
         });
 
-        if external_plugin_store.is_empty() && !use_tailwind_design_system {
+        if external_plugin_store.is_empty() {
             external_linter = None;
         }
         let config_store = ConfigStore::new(base_config, nested_configs, external_plugin_store);
@@ -242,6 +241,7 @@ impl ServerLinterBuilder {
             fix_kind,
             lint_options.report_unused_directive,
             options.rules_customization,
+            use_tailwind_design_system,
         )
     }
 }
@@ -398,6 +398,7 @@ pub struct ServerLinter {
     fix_kind: FixKind,
     unused_directives_severity: Option<AllowWarnDeny>,
     rules_customization: Option<RulesCustomization>,
+    use_tailwind_design_system: bool,
 }
 
 impl Tool for ServerLinter {
@@ -484,6 +485,14 @@ impl Tool for ServerLinter {
 
         if options.type_aware.unwrap_or(self.runner.has_type_aware()) {
             watchers.push("**/tsconfig*.json".to_string());
+        }
+
+        // Tailwind v4 configuration is CSS-first. Stylesheets and package manifests can both alter
+        // the transitive design-system graph, so either kind of change rebuilds it and refreshes
+        // diagnostics for open documents.
+        if self.use_tailwind_design_system {
+            watchers.push("**/*.css".to_string());
+            watchers.push("**/package.json".to_string());
         }
 
         watchers
@@ -691,6 +700,7 @@ impl ServerLinter {
         fix_kind: FixKind,
         unused_directives_severity: Option<AllowWarnDeny>,
         rules_customization: Option<RulesCustomization>,
+        use_tailwind_design_system: bool,
     ) -> Self {
         Self {
             run,
@@ -703,6 +713,7 @@ impl ServerLinter {
             fix_kind,
             unused_directives_severity,
             rules_customization,
+            use_tailwind_design_system,
         }
     }
 
@@ -1042,6 +1053,16 @@ mod test_watchers {
             assert_eq!(patterns[2], "**/oxlint.config.ts".to_string());
             assert_eq!(patterns[3], "**/oxlint.config.mts".to_string());
             assert_eq!(patterns[4], "**/tsconfig*.json".to_string());
+        }
+
+        #[test]
+        fn test_linter_with_tailwind_design_system() {
+            let patterns =
+                Tester::new("fixtures/lsp/watchers/tailwind", json!({})).get_watcher_patterns();
+
+            assert_eq!(patterns.len(), 6);
+            assert_eq!(patterns[4], "**/*.css".to_string());
+            assert_eq!(patterns[5], "**/package.json".to_string());
         }
     }
 

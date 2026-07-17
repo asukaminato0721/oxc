@@ -2203,6 +2203,7 @@ dependencies = [
  "oxc_span",
  "oxc_str",
  "oxc_syntax",
+ "oxc_tailwindcss",
  "papaya",
  "phf",
  "rayon",
@@ -2590,6 +2591,17 @@ dependencies = [
  "phf",
  "serde",
  "unicode-id-start",
+]
+
+[[package]]
+name = "oxc_tailwindcss"
+version = "0.1.0"
+dependencies = [
+ "bitflags",
+ "compact_str",
+ "rustc-hash",
+ "serde_json",
+ "tempfile",
 ]
 
 [[package]]

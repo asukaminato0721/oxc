@@ -46,6 +46,7 @@ oxc_semantic = { workspace = true, features = ["cfg", "linter"] }
 oxc_span = { workspace = true, features = ["schemars", "serialize"] }
 oxc_str = { workspace = true, features = ["serialize"] }
 oxc_syntax = { workspace = true, features = ["serialize"] }
+oxc_tailwindcss = { workspace = true }
 
 #
 bitflags = { workspace = true }

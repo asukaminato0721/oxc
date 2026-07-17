@@ -79,8 +79,7 @@ pub use crate::{
     external_linter::{
         ExternalLinter, ExternalLinterCreateWorkspaceCb, ExternalLinterDestroyWorkspaceCb,
         ExternalLinterLintFileCb, ExternalLinterLoadPluginCb, ExternalLinterSetupRuleConfigsCb,
-        JsFix, LintFileResult, LoadPluginResult, TailwindDesignSystemCb,
-        convert_and_merge_js_fixes,
+        JsFix, LintFileResult, LoadPluginResult, convert_and_merge_js_fixes,
     },
     external_plugin_store::{ExternalOptionsId, ExternalPluginStore, ExternalRuleId},
     fixer::{Fix, FixKind, Fixer, Message, MessageRule, PossibleFixes},
@@ -287,7 +286,9 @@ pub struct Linter {
     config: ConfigStore,
     external_linter: Option<ExternalLinter>,
     workspace_uri: Option<Box<str>>,
-    tailwind_design_system: Option<TailwindDesignSystemCb>,
+    tailwind_design_system: Option<Arc<oxc_tailwindcss::DesignSystem>>,
+    tailwind_cache: Arc<oxc_tailwindcss::DesignSystemCache>,
+    tailwind_cwd: Option<Box<Path>>,
 }
 
 impl std::fmt::Debug for Linter {
@@ -298,6 +299,8 @@ impl std::fmt::Debug for Linter {
             .field("external_linter", &self.external_linter)
             .field("workspace_uri", &self.workspace_uri)
             .field("has_tailwind_design_system", &self.tailwind_design_system.is_some())
+            .field("tailwind_cache", &self.tailwind_cache)
+            .field("tailwind_cwd", &self.tailwind_cwd)
             .finish()
     }
 }
@@ -308,10 +311,16 @@ impl Linter {
         config: ConfigStore,
         external_linter: Option<ExternalLinter>,
     ) -> Self {
-        let tailwind_design_system = external_linter
-            .as_ref()
-            .and_then(|external| external.tailwind_design_system.as_ref().map(Arc::clone));
-        Self { options, config, external_linter, workspace_uri: None, tailwind_design_system }
+        let tailwind_design_system = None;
+        Self {
+            options,
+            config,
+            external_linter,
+            workspace_uri: None,
+            tailwind_design_system,
+            tailwind_cache: Arc::default(),
+            tailwind_cwd: None,
+        }
     }
 
     #[must_use]
@@ -321,9 +330,16 @@ impl Linter {
     }
 
     #[must_use]
-    pub fn with_tailwind_design_system(mut self, callback: TailwindDesignSystemCb) -> Self {
-        self.tailwind_design_system = Some(callback);
+    pub fn with_tailwind_design_system(
+        mut self,
+        design_system: Arc<oxc_tailwindcss::DesignSystem>,
+    ) -> Self {
+        self.tailwind_design_system = Some(design_system);
         self
+    }
+
+    pub(crate) fn set_tailwind_cwd(&mut self, cwd: Box<Path>) {
+        self.tailwind_cwd = Some(cwd);
     }
 
     /// Set the kind of auto fixes to apply.
@@ -398,10 +414,26 @@ impl Linter {
             self.options,
             config,
             tailwind_design_system,
+            Arc::clone(&self.tailwind_cache),
+            self.tailwind_cwd.clone(),
         ));
 
+        if rules.iter().any(|(rule, _)| rule.plugin_name() == "better_tailwindcss")
+            && let Err(error) = ctx_host.tailwind_design_system()
+        {
+            ctx_host.push_diagnostic(Message::new(
+                OxcDiagnostic::warn(format!(
+                    "Failed to load Tailwind CSS design system: {error}"
+                ))
+                .with_help(
+                    "Install Tailwind CSS in the project and check better-tailwindcss.cwd and entryPoint settings",
+                ),
+                PossibleFixes::None,
+            ));
+        }
+
         #[cfg(debug_assertions)]
-        let mut current_diagnostic_index = 0;
+        let mut current_diagnostic_index = ctx_host.diagnostic_count();
 
         let is_partial_loader_file = ctx_host
             .file_extension()

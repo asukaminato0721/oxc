@@ -14,14 +14,14 @@ use oxc_allocator::{Allocator, free_fixed_size_allocator};
 use oxc_linter::{
     ExternalLinter, ExternalLinterCreateWorkspaceCb, ExternalLinterDestroyWorkspaceCb,
     ExternalLinterLintFileCb, ExternalLinterLoadPluginCb, ExternalLinterSetupRuleConfigsCb,
-    LintFileResult, LoadPluginResult, TailwindDesignSystemCb,
+    LintFileResult, LoadPluginResult,
 };
 
 use crate::{
     generated::raw_transfer_constants::{BLOCK_ALIGN, BUFFER_SIZE},
     run::{
         JsCreateWorkspaceCb, JsDestroyWorkspaceCb, JsLintFileCb, JsLoadPluginCb,
-        JsSetupRuleConfigsCb, JsTailwindDesignSystemCb,
+        JsSetupRuleConfigsCb,
     },
 };
 
@@ -32,15 +32,12 @@ pub fn create_external_linter(
     lint_file: JsLintFileCb,
     create_workspace: JsCreateWorkspaceCb,
     destroy_workspace: JsDestroyWorkspaceCb,
-    tailwind_design_system: JsTailwindDesignSystemCb,
 ) -> ExternalLinter {
     let rust_load_plugin = wrap_load_plugin(load_plugin);
     let rust_setup_rule_configs = wrap_setup_rule_configs(setup_rule_configs);
     let rust_lint_file = wrap_lint_file(lint_file);
     let rust_create_workspace = wrap_create_workspace(create_workspace);
     let rust_destroy_workspace = wrap_destroy_workspace(destroy_workspace);
-    let rust_tailwind_design_system = wrap_tailwind_design_system(tailwind_design_system);
-
     ExternalLinter::new(
         rust_load_plugin,
         rust_setup_rule_configs,
@@ -48,20 +45,6 @@ pub fn create_external_linter(
         rust_create_workspace,
         rust_destroy_workspace,
     )
-    .with_tailwind_design_system(rust_tailwind_design_system)
-}
-
-fn wrap_tailwind_design_system(cb: JsTailwindDesignSystemCb) -> TailwindDesignSystemCb {
-    let handle = tokio::runtime::Handle::current();
-    Arc::new(Box::new(move |request| {
-        let future = async { cb.call_async(request).await?.into_future().await };
-        let result = if tokio::runtime::Handle::try_current().is_ok() {
-            tokio::task::block_in_place(|| handle.block_on(future))
-        } else {
-            handle.block_on(future)
-        };
-        result.map_err(|error| format!("Tailwind callback threw an error: {error}"))
-    }))
 }
 
 /// Result returned by `loadPlugin` JS callback.

@@ -1,8 +1,8 @@
 use std::{
     borrow::Cow,
-    cell::{Cell, RefCell},
+    cell::{Cell, OnceCell, RefCell},
     ffi::OsStr,
-    path::Path,
+    path::{Path, PathBuf},
     rc::Rc,
     sync::Arc,
 };
@@ -14,7 +14,7 @@ use oxc_semantic::Semantic;
 use oxc_span::{SourceType, Span};
 
 use crate::{
-    AllowWarnDeny, FrameworkFlags, TailwindDesignSystemCb,
+    AllowWarnDeny, FrameworkFlags,
     config::{LintConfig, LintPlugins, OxlintEnv, OxlintGlobals, OxlintSettings},
     disable_directives::{DisableDirectives, DisableDirectivesBuilder, RuleCommentType},
     fixer::{Fix, FixKind, Message, PossibleFixes},
@@ -169,10 +169,10 @@ pub struct ContextHost<'a> {
     pub(super) config: Arc<LintConfig>,
     /// Front-end frameworks that might be in use in the target file.
     pub(super) frameworks: FrameworkFlags,
-    /// Optional bridge to the Tailwind JavaScript design system.
-    pub(super) tailwind_design_system: Option<TailwindDesignSystemCb>,
-    /// Prevent repeated project-loading errors when several Tailwind rules inspect one file.
-    pub(super) tailwind_error_reported: Cell<bool>,
+    pub(super) tailwind_cache: Arc<oxc_tailwindcss::DesignSystemCache>,
+    pub(super) tailwind_cwd: Option<Box<Path>>,
+    pub(super) native_tailwind_design_system:
+        OnceCell<Result<Arc<oxc_tailwindcss::DesignSystem>, String>>,
 }
 
 impl std::fmt::Debug for ContextHost<'_> {
@@ -190,7 +190,9 @@ impl<'a> ContextHost<'a> {
         allocator: &'a Allocator,
         options: LintOptions,
         config: Arc<LintConfig>,
-        tailwind_design_system: Option<TailwindDesignSystemCb>,
+        tailwind_design_system: Option<Arc<oxc_tailwindcss::DesignSystem>>,
+        tailwind_cache: Arc<oxc_tailwindcss::DesignSystemCache>,
+        tailwind_cwd: Option<Box<Path>>,
     ) -> Self {
         const DIAGNOSTICS_INITIAL_CAPACITY: usize = 16;
 
@@ -212,10 +214,48 @@ impl<'a> ContextHost<'a> {
             file_extension,
             config,
             frameworks: options.framework_hints,
-            tailwind_design_system,
-            tailwind_error_reported: Cell::new(false),
+            tailwind_cache,
+            tailwind_cwd,
+            native_tailwind_design_system: tailwind_design_system
+                .map(Ok)
+                .map_or_else(OnceCell::new, OnceCell::from),
         }
         .sniff_for_frameworks()
+    }
+
+    pub(crate) fn tailwind_design_system(&self) -> Result<&oxc_tailwindcss::DesignSystem, &str> {
+        self.native_tailwind_design_system
+            .get_or_init(|| {
+                let default_cwd = self
+                    .tailwind_cwd
+                    .as_deref()
+                    .map(Path::to_path_buf)
+                    .or_else(|| std::env::current_dir().ok())
+                    .unwrap_or_default();
+                let settings = self
+                    .config
+                    .settings
+                    .json
+                    .as_ref()
+                    .and_then(|settings| settings.get("better-tailwindcss"))
+                    .and_then(serde_json::Value::as_object);
+                let cwd = settings
+                    .and_then(|settings| settings.get("cwd"))
+                    .and_then(serde_json::Value::as_str)
+                    .map(PathBuf::from)
+                    .map(|cwd| if cwd.is_absolute() { cwd } else { default_cwd.join(cwd) })
+                    .unwrap_or(default_cwd);
+                let mut options = oxc_tailwindcss::LoadOptions::new(cwd);
+                if let Some(entry_point) = settings
+                    .and_then(|settings| settings.get("entryPoint"))
+                    .and_then(serde_json::Value::as_str)
+                {
+                    options = options.with_entry_point(entry_point);
+                }
+                self.tailwind_cache.get_or_load(&options).map_err(|error| error.to_string())
+            })
+            .as_deref()
+            .map_err(String::as_str)
     }
 
     /// The current [`ContextSubHost`]

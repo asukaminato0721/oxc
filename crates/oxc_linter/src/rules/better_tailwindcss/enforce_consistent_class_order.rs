@@ -93,16 +93,12 @@ impl Rule for EnforceConsistentClassOrder {
             ClassOrder::Asc => sorted.sort_unstable(),
             ClassOrder::Desc => sorted.sort_by(|left, right| right.cmp(left)),
             ClassOrder::Official | ClassOrder::Strict => {
-                let Some(order): Option<Vec<(String, Option<String>)>> =
-                    ctx.tailwind_query("classOrder", &sorted, serde_json::json!({}))
-                else {
-                    return;
-                };
-                let order = order
-                    .into_iter()
-                    .map(|(class_name, order)| {
-                        (class_name, order.and_then(|order| order.parse::<i128>().ok()))
-                    })
+                let Some(design) = ctx.tailwind_design_system() else { return };
+                let order = sorted
+                    .iter()
+                    .copied()
+                    .zip(design.class_order(&sorted))
+                    .map(|(class_name, order)| (class_name, order.map(i128::from)))
                     .collect::<FxHashMap<_, _>>();
                 sorted.sort_by(|left, right| compare_official(left, right, &order, self));
             }
@@ -138,7 +134,7 @@ impl Rule for EnforceConsistentClassOrder {
 fn compare_official(
     left: &str,
     right: &str,
-    orders: &FxHashMap<String, Option<i128>>,
+    orders: &FxHashMap<&str, Option<i128>>,
     options: &EnforceConsistentClassOrder,
 ) -> Ordering {
     match (orders.get(left).copied().flatten(), orders.get(right).copied().flatten()) {
@@ -163,32 +159,22 @@ fn compare_official(
 fn test() {
     use crate::tester::Tester;
 
-    let pass = vec![r#"<div className="flex p-2 text-sm" />"#];
-    let fail = vec![r#"<div className="text-sm flex p-2" />"#];
-    let fix = vec![(
-        r#"<div className="text-sm flex p-2" />"#,
+    let pass = vec![
         r#"<div className="flex p-2 text-sm" />"#,
-    )];
+        r#"<div className="relative flex size-4 border-2 bg-red-500 p-2 text-sm sm:flex" />"#,
+    ];
+    let fail = vec![
+        r#"<div className="text-sm flex p-2" />"#,
+        r#"<div className="sm:flex text-sm bg-red-500 p-2 border-2 size-4 flex relative" />"#,
+    ];
+    let fix = vec![
+        (r#"<div className="text-sm flex p-2" />"#, r#"<div className="flex p-2 text-sm" />"#),
+        (
+            r#"<div className="sm:flex text-sm bg-red-500 p-2 border-2 size-4 flex relative" />"#,
+            r#"<div className="relative flex size-4 border-2 bg-red-500 p-2 text-sm sm:flex" />"#,
+        ),
+    ];
     Tester::new(EnforceConsistentClassOrder::NAME, EnforceConsistentClassOrder::PLUGIN, pass, fail)
-        .with_tailwind_design_system(|request| {
-            let request: serde_json::Value = serde_json::from_str(&request).unwrap();
-            let result = request["classes"]
-                .as_array()
-                .unwrap()
-                .iter()
-                .map(|class| {
-                    let name = class.as_str().unwrap();
-                    let order = match name {
-                        "flex" => "1",
-                        "p-2" => "2",
-                        "text-sm" => "3",
-                        _ => "4",
-                    };
-                    serde_json::json!([name, order])
-                })
-                .collect::<Vec<_>>();
-            Ok(serde_json::to_string(&result).unwrap())
-        })
         .expect_fix(fix)
         .test_and_snapshot();
 }

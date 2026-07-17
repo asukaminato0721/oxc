@@ -1,0 +1,28 @@
+[package]
+name = "oxc_tailwindcss"
+version = "0.1.0"
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
+keywords.workspace = true
+license.workspace = true
+publish = false
+repository.workspace = true
+rust-version.workspace = true
+description = "Native Tailwind CSS v4 design system for Oxc"
+
+[lints]
+workspace = true
+
+[lib]
+doctest = false
+
+[dependencies]
+bitflags = { workspace = true }
+compact_str = { workspace = true }
+rustc-hash = { workspace = true }
+serde_json = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }

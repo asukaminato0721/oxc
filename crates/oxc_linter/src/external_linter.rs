@@ -40,9 +40,6 @@ pub type ExternalLinterLoadPluginCb = Arc<
 pub type ExternalLinterSetupRuleConfigsCb =
     Arc<Box<dyn Fn(String) -> Result<(), String> + Send + Sync>>;
 
-/// Executes a Tailwind design-system operation in the JavaScript host.
-pub type TailwindDesignSystemCb = Arc<Box<dyn Fn(String) -> Result<String, String> + Send + Sync>>;
-
 pub type ExternalLinterLintFileCb = Arc<
     Box<
         dyn Fn(
@@ -255,7 +252,6 @@ pub struct ExternalLinter {
     pub(crate) lint_file: ExternalLinterLintFileCb,
     pub create_workspace: ExternalLinterCreateWorkspaceCb,
     pub destroy_workspace: ExternalLinterDestroyWorkspaceCb,
-    pub(crate) tailwind_design_system: Option<TailwindDesignSystemCb>,
 }
 
 impl ExternalLinter {
@@ -266,20 +262,7 @@ impl ExternalLinter {
         create_workspace: ExternalLinterCreateWorkspaceCb,
         destroy_workspace: ExternalLinterDestroyWorkspaceCb,
     ) -> Self {
-        Self {
-            load_plugin,
-            setup_rule_configs,
-            lint_file,
-            create_workspace,
-            destroy_workspace,
-            tailwind_design_system: None,
-        }
-    }
-
-    #[must_use]
-    pub fn with_tailwind_design_system(mut self, callback: TailwindDesignSystemCb) -> Self {
-        self.tailwind_design_system = Some(callback);
-        self
+        Self { load_plugin, setup_rule_configs, lint_file, create_workspace, destroy_workspace }
     }
 }
 

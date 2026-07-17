@@ -1,0 +1,11 @@
+{
+  "plugins": ["better-tailwindcss"],
+  "settings": {
+    "better-tailwindcss": {
+      "entryPoint": "./missing.css"
+    }
+  },
+  "rules": {
+    "better-tailwindcss/no-unknown-classes": "error"
+  }
+}

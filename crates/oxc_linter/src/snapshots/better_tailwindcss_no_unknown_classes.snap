@@ -7,3 +7,21 @@ source: crates/oxc_linter/src/tester.rs
  1 │ <div className="flex typo-class" />
    ·                      ──────────
    ╰────
+
+  ⚠ better_tailwindcss(no-unknown-classes): Unknown class detected: p-1.1
+   ╭─[no_unknown_classes.tsx:1:17]
+ 1 │ <div className="p-1.1 grid-cols-0 bg-red-500/50/25" />
+   ·                 ─────
+   ╰────
+
+  ⚠ better_tailwindcss(no-unknown-classes): Unknown class detected: grid-cols-0
+   ╭─[no_unknown_classes.tsx:1:23]
+ 1 │ <div className="p-1.1 grid-cols-0 bg-red-500/50/25" />
+   ·                       ───────────
+   ╰────
+
+  ⚠ better_tailwindcss(no-unknown-classes): Unknown class detected: bg-red-500/50/25
+   ╭─[no_unknown_classes.tsx:1:35]
+ 1 │ <div className="p-1.1 grid-cols-0 bg-red-500/50/25" />
+   ·                                   ────────────────
+   ╰────

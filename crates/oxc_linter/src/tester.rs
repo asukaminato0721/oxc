@@ -314,7 +314,6 @@ pub struct Tester {
     snapshot_suffix: Option<&'static str>,
     current_working_directory: Box<Path>,
     plugins: LintPlugins,
-    tailwind_design_system: Option<crate::TailwindDesignSystemCb>,
 }
 
 impl Tester {
@@ -342,7 +341,6 @@ impl Tester {
             snapshot_suffix: None,
             current_working_directory,
             plugins: LintPlugins::default(),
-            tailwind_design_system: None,
         }
     }
 
@@ -398,14 +396,6 @@ impl Tester {
 
     pub fn with_vitest_plugin(mut self, yes: bool) -> Self {
         self.plugins.set(LintPlugins::VITEST, yes);
-        self
-    }
-
-    pub fn with_tailwind_design_system(
-        mut self,
-        callback: impl Fn(String) -> Result<String, String> + Send + Sync + 'static,
-    ) -> Self {
-        self.tailwind_design_system = Some(Arc::new(Box::new(callback)));
         self
     }
 
@@ -673,8 +663,13 @@ impl Tester {
             ),
             None,
         );
-        if let Some(callback) = self.tailwind_design_system.as_ref() {
-            linter = linter.with_tailwind_design_system(Arc::clone(callback));
+        if matches!(self.plugin_name, "better-tailwindcss" | "better_tailwindcss") {
+            let design_system = oxc_tailwindcss::DesignSystem::from_css(
+                "@theme { --spacing: 0.25rem; --color-red-500: red; --text-sm: 0.875rem; --breakpoint-sm: 40rem; }",
+                1,
+            )
+            .expect("test Tailwind design system should load");
+            linter = linter.with_tailwind_design_system(Arc::new(design_system));
         }
         let linter = linter.with_fix(fix_kind.into());
 

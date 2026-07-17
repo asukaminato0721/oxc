@@ -8,3 +8,10 @@ source: crates/oxc_linter/src/tester.rs
    ·                 ────────────────
    ╰────
   help: Replace `text-sm flex p-2` with `flex p-2 text-sm`.
+
+  ⚠ better_tailwindcss(enforce-consistent-class-order): Incorrect class order. Expected "sm:flex text-sm bg-red-500 p-2 border-2 size-4 flex relative" to be "relative flex size-4 border-2 bg-red-500 p-2 text-sm sm:flex".
+   ╭─[enforce_consistent_class_order.tsx:1:17]
+ 1 │ <div className="sm:flex text-sm bg-red-500 p-2 border-2 size-4 flex relative" />
+   ·                 ────────────────────────────────────────────────────────────
+   ╰────
+  help: Replace `sm:flex text-sm bg-red-500 p-2 border-2 size-4 flex relative` with `relative flex size-4 border-2 bg-red-500 p-2 text-sm sm:flex`.

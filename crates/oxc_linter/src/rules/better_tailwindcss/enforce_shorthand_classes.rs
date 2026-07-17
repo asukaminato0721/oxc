@@ -42,15 +42,9 @@ impl Rule for EnforceShorthandClasses {
             return;
         }
         let mut groups = find_groups(&classes);
-        let replacement_names = groups
-            .iter()
-            .flat_map(|group| group.replacements.iter().map(String::as_str))
-            .collect::<Vec<_>>();
-        let unknown: Vec<String> = ctx
-            .tailwind_query("unknownClasses", &replacement_names, serde_json::json!({}))
-            .unwrap_or(replacement_names.iter().map(|name| (*name).to_owned()).collect());
+        let Some(design) = ctx.tailwind_design_system() else { return };
         groups.retain(|group| {
-            !group.replacements.iter().any(|replacement| unknown.contains(replacement))
+            group.replacements.iter().all(|replacement| design.is_known_class(replacement))
         });
 
         for group in groups {
@@ -200,7 +194,6 @@ fn test() {
     let fail = vec![r#"<div className="w-4 h-4" />"#];
     let fix = vec![(r#"<div className="w-4 h-4" />"#, r#"<div className="size-4" />"#)];
     Tester::new(EnforceShorthandClasses::NAME, EnforceShorthandClasses::PLUGIN, pass, fail)
-        .with_tailwind_design_system(|_| Ok("[]".to_owned()))
         .expect_fix(fix)
         .test_and_snapshot();
 }

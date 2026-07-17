@@ -13,3 +13,51 @@ source: crates/oxc_linter/src/tester.rs
  1 │ <div className="p-2 p-4" />
    ·                     ───
    ╰────
+
+  ⚠ better_tailwindcss(no-conflicting-classes): Conflicting class detected: "scale-x-90" and "scale-x-95" apply the same CSS properties: "--tw-scale-x", "scale".
+   ╭─[no_conflicting_classes.tsx:1:17]
+ 1 │ <div className="scale-x-90 scale-x-95" />
+   ·                 ──────────
+   ╰────
+
+  ⚠ better_tailwindcss(no-conflicting-classes): Conflicting class detected: "scale-x-95" and "scale-x-90" apply the same CSS properties: "--tw-scale-x", "scale".
+   ╭─[no_conflicting_classes.tsx:1:28]
+ 1 │ <div className="scale-x-90 scale-x-95" />
+   ·                            ──────────
+   ╰────
+
+  ⚠ better_tailwindcss(no-conflicting-classes): Conflicting class detected: "brightness-75" and "brightness-100" apply the same CSS properties: "--tw-brightness", "filter".
+   ╭─[no_conflicting_classes.tsx:1:17]
+ 1 │ <div className="brightness-75 brightness-100" />
+   ·                 ─────────────
+   ╰────
+
+  ⚠ better_tailwindcss(no-conflicting-classes): Conflicting class detected: "brightness-100" and "brightness-75" apply the same CSS properties: "--tw-brightness", "filter".
+   ╭─[no_conflicting_classes.tsx:1:31]
+ 1 │ <div className="brightness-75 brightness-100" />
+   ·                               ──────────────
+   ╰────
+
+  ⚠ better_tailwindcss(no-conflicting-classes): Conflicting class detected: "placeholder-red-500" and "placeholder-red-500/50" apply the same CSS properties: "--tw-sort", "color".
+   ╭─[no_conflicting_classes.tsx:1:17]
+ 1 │ <div className="placeholder-red-500 placeholder-red-500/50" />
+   ·                 ───────────────────
+   ╰────
+
+  ⚠ better_tailwindcss(no-conflicting-classes): Conflicting class detected: "placeholder-red-500/50" and "placeholder-red-500" apply the same CSS properties: "--tw-sort", "color".
+   ╭─[no_conflicting_classes.tsx:1:37]
+ 1 │ <div className="placeholder-red-500 placeholder-red-500/50" />
+   ·                                     ──────────────────────
+   ╰────
+
+  ⚠ better_tailwindcss(no-conflicting-classes): Conflicting class detected: "scroll-p-2" and "scroll-p-4" apply the same CSS properties: "scroll-padding".
+   ╭─[no_conflicting_classes.tsx:1:17]
+ 1 │ <div className="scroll-p-2 scroll-p-4" />
+   ·                 ──────────
+   ╰────
+
+  ⚠ better_tailwindcss(no-conflicting-classes): Conflicting class detected: "scroll-p-4" and "scroll-p-2" apply the same CSS properties: "scroll-padding".
+   ╭─[no_conflicting_classes.tsx:1:28]
+ 1 │ <div className="scroll-p-2 scroll-p-4" />
+   ·                            ──────────
+   ╰────
