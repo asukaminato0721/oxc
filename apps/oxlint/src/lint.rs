@@ -353,9 +353,11 @@ impl CliRunner {
             );
         }
 
-        // If no external rules, discard `ExternalLinter`
+        let use_tailwind_design_system = lint_config.plugins().has_better_tailwindcss()
+            || nested_configs.values().any(|config| config.plugins().has_better_tailwindcss());
+        // Keep the JavaScript bridge for native Tailwind rules even when no JS plugin rules run.
         let mut external_linter = self.external_linter;
-        if external_plugin_store.is_empty() {
+        if external_plugin_store.is_empty() && !use_tailwind_design_system {
             external_linter = None;
         }
 

@@ -1,0 +1,16 @@
+---
+source: crates/oxc_linter/src/tester.rs
+---
+
+  ⚠ better_tailwindcss(no-restricted-classes): Restricted class: "container".
+   ╭─[no_restricted_classes.tsx:1:17]
+ 1 │ <div className="container flex" />
+   ·                 ─────────
+   ╰────
+
+  ⚠ better_tailwindcss(no-restricted-classes): Use a semantic color instead of red.
+   ╭─[no_restricted_classes.tsx:1:7]
+ 1 │ clsx("text-red-500")
+   ·       ────────────
+   ╰────
+  help: Replace `text-red-500` with `text-brand-500`.

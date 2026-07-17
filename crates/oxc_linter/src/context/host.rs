@@ -14,7 +14,7 @@ use oxc_semantic::Semantic;
 use oxc_span::{SourceType, Span};
 
 use crate::{
-    AllowWarnDeny, FrameworkFlags,
+    AllowWarnDeny, FrameworkFlags, TailwindDesignSystemCb,
     config::{LintConfig, LintPlugins, OxlintEnv, OxlintGlobals, OxlintSettings},
     disable_directives::{DisableDirectives, DisableDirectivesBuilder, RuleCommentType},
     fixer::{Fix, FixKind, Message, PossibleFixes},
@@ -169,6 +169,10 @@ pub struct ContextHost<'a> {
     pub(super) config: Arc<LintConfig>,
     /// Front-end frameworks that might be in use in the target file.
     pub(super) frameworks: FrameworkFlags,
+    /// Optional bridge to the Tailwind JavaScript design system.
+    pub(super) tailwind_design_system: Option<TailwindDesignSystemCb>,
+    /// Prevent repeated project-loading errors when several Tailwind rules inspect one file.
+    pub(super) tailwind_error_reported: Cell<bool>,
 }
 
 impl std::fmt::Debug for ContextHost<'_> {
@@ -186,6 +190,7 @@ impl<'a> ContextHost<'a> {
         allocator: &'a Allocator,
         options: LintOptions,
         config: Arc<LintConfig>,
+        tailwind_design_system: Option<TailwindDesignSystemCb>,
     ) -> Self {
         const DIAGNOSTICS_INITIAL_CAPACITY: usize = 16;
 
@@ -207,6 +212,8 @@ impl<'a> ContextHost<'a> {
             file_extension,
             config,
             frameworks: options.framework_hints,
+            tailwind_design_system,
+            tailwind_error_reported: Cell::new(false),
         }
         .sniff_for_frameworks()
     }

@@ -1,0 +1,62 @@
+---
+source: crates/oxc_linter/src/tester.rs
+---
+
+  ⚠ better_tailwindcss(no-unnecessary-whitespace): Unnecessary whitespace.
+   ╭─[no_unnecessary_whitespace.tsx:1:17]
+ 1 │ <div className="  rounded  underline  " />
+   ·                 ──
+   ╰────
+  help: Remove `  `.
+
+  ⚠ better_tailwindcss(no-unnecessary-whitespace): Unnecessary whitespace.
+   ╭─[no_unnecessary_whitespace.tsx:1:26]
+ 1 │ <div className="  rounded  underline  " />
+   ·                          ──
+   ╰────
+  help: Replace `  ` with ` `.
+
+  ⚠ better_tailwindcss(no-unnecessary-whitespace): Unnecessary whitespace.
+   ╭─[no_unnecessary_whitespace.tsx:1:37]
+ 1 │ <div className="  rounded  underline  " />
+   ·                                     ──
+   ╰────
+  help: Remove `  `.
+
+  ⚠ better_tailwindcss(no-unnecessary-whitespace): Unnecessary whitespace.
+   ╭─[no_unnecessary_whitespace.tsx:1:9]
+ 1 │ cn("flex   items-center")
+   ·         ───
+   ╰────
+  help: Replace `   ` with ` `.
+
+  ⚠ better_tailwindcss(no-unnecessary-whitespace): Unnecessary whitespace.
+   ╭─[no_unnecessary_whitespace.tsx:1:18]
+ 1 │ const classes = `  rounded  `
+   ·                  ──
+   ╰────
+  help: Remove `  `.
+
+  ⚠ better_tailwindcss(no-unnecessary-whitespace): Unnecessary whitespace.
+   ╭─[no_unnecessary_whitespace.tsx:1:27]
+ 1 │ const classes = `  rounded  `
+   ·                           ──
+   ╰────
+  help: Remove `  `.
+
+  ⚠ better_tailwindcss(no-unnecessary-whitespace): Unnecessary whitespace.
+   ╭─[no_unnecessary_whitespace.tsx:1:25]
+ 1 │ ╭─▶ const classes = `rounded  
+ 2 │ ╰─▶   underline`
+   ╰────
+  help: Replace `
+          ` with `
+          `.
+
+  ⚠ better_tailwindcss(no-unnecessary-whitespace): Unnecessary whitespace.
+   ╭─[no_unnecessary_whitespace.tsx:1:25]
+ 1 │ ╭─▶ const classes = `rounded
+ 2 │ ╰─▶   underline`
+   ╰────
+  help: Replace `
+          ` with ` `.

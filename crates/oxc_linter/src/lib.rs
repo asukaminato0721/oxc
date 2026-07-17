@@ -13,6 +13,7 @@ use std::{
     ptr::{self, NonNull},
     rc::Rc,
     string::ToString,
+    sync::Arc,
 };
 
 use oxc_allocator::{Allocator, AllocatorPool, ArenaVec, CloneIn, TakeIn};
@@ -78,7 +79,8 @@ pub use crate::{
     external_linter::{
         ExternalLinter, ExternalLinterCreateWorkspaceCb, ExternalLinterDestroyWorkspaceCb,
         ExternalLinterLintFileCb, ExternalLinterLoadPluginCb, ExternalLinterSetupRuleConfigsCb,
-        JsFix, LintFileResult, LoadPluginResult, convert_and_merge_js_fixes,
+        JsFix, LintFileResult, LoadPluginResult, TailwindDesignSystemCb,
+        convert_and_merge_js_fixes,
     },
     external_plugin_store::{ExternalOptionsId, ExternalPluginStore, ExternalRuleId},
     fixer::{Fix, FixKind, Fixer, Message, MessageRule, PossibleFixes},
@@ -279,13 +281,25 @@ fn execute_rules<'a, const TIMINGS: bool>(
 /// Base URL for the documentation, used to generate rule documentation URLs when a diagnostic is reported.
 const WEBSITE_BASE_RULES_URL: &str = "https://oxc.rs/docs/guide/usage/linter/rules";
 
-#[derive(Debug)]
 #[expect(clippy::struct_field_names)]
 pub struct Linter {
     options: LintOptions,
     config: ConfigStore,
     external_linter: Option<ExternalLinter>,
     workspace_uri: Option<Box<str>>,
+    tailwind_design_system: Option<TailwindDesignSystemCb>,
+}
+
+impl std::fmt::Debug for Linter {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Linter")
+            .field("options", &self.options)
+            .field("config", &self.config)
+            .field("external_linter", &self.external_linter)
+            .field("workspace_uri", &self.workspace_uri)
+            .field("has_tailwind_design_system", &self.tailwind_design_system.is_some())
+            .finish()
+    }
 }
 
 impl Linter {
@@ -294,12 +308,21 @@ impl Linter {
         config: ConfigStore,
         external_linter: Option<ExternalLinter>,
     ) -> Self {
-        Self { options, config, external_linter, workspace_uri: None }
+        let tailwind_design_system = external_linter
+            .as_ref()
+            .and_then(|external| external.tailwind_design_system.as_ref().map(Arc::clone));
+        Self { options, config, external_linter, workspace_uri: None, tailwind_design_system }
     }
 
     #[must_use]
     pub fn with_workspace_uri(mut self, workspace_uri: Option<&str>) -> Self {
         self.workspace_uri = workspace_uri.map(Box::from);
+        self
+    }
+
+    #[must_use]
+    pub fn with_tailwind_design_system(mut self, callback: TailwindDesignSystemCb) -> Self {
+        self.tailwind_design_system = Some(callback);
         self
     }
 
@@ -367,8 +390,15 @@ impl Linter {
         let ResolvedLinterState { rules, config, external_rules } = self.config.resolve(path);
         let mut timing_recorder = TIMINGS.then(|| RuleTimingRecorder::with_capacity(rules.len()));
 
-        let mut ctx_host =
-            Rc::new(ContextHost::new(path, context_sub_hosts, allocator, self.options, config));
+        let tailwind_design_system = self.tailwind_design_system.as_ref().map(Arc::clone);
+        let mut ctx_host = Rc::new(ContextHost::new(
+            path,
+            context_sub_hosts,
+            allocator,
+            self.options,
+            config,
+            tailwind_design_system,
+        ));
 
         #[cfg(debug_assertions)]
         let mut current_diagnostic_index = 0;

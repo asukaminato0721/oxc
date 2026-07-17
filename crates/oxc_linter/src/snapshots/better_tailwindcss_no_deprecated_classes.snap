@@ -1,0 +1,23 @@
+---
+source: crates/oxc_linter/src/tester.rs
+---
+
+  ⚠ better_tailwindcss(no-deprecated-classes): Deprecated class detected. Replace "shadow" with "shadow-sm".
+   ╭─[no_deprecated_classes.tsx:1:17]
+ 1 │ <div className="shadow hover:flex-shrink-0" />
+   ·                 ──────
+   ╰────
+  help: Replace `shadow` with `shadow-sm`.
+
+  ⚠ better_tailwindcss(no-deprecated-classes): Deprecated class detected. Replace "hover:flex-shrink-0" with "hover:shrink-0".
+   ╭─[no_deprecated_classes.tsx:1:24]
+ 1 │ <div className="shadow hover:flex-shrink-0" />
+   ·                        ───────────────────
+   ╰────
+  help: Replace `hover:flex-shrink-0` with `hover:shrink-0`.
+
+  ⚠ better_tailwindcss(no-deprecated-classes): Class "bg-opacity-50" is deprecated. Check the Tailwind CSS v4 upgrade guide.
+   ╭─[no_deprecated_classes.tsx:1:5]
+ 1 │ cn("bg-opacity-50")
+   ·     ─────────────
+   ╰────

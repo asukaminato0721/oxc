@@ -10,6 +10,20 @@
 )]
 #[cfg(feature = "ruledocs")]
 use crate::rule::RuleInfo;
+pub use crate::rules::better_tailwindcss::enforce_canonical_classes::EnforceCanonicalClasses as BetterTailwindcssEnforceCanonicalClasses;
+pub use crate::rules::better_tailwindcss::enforce_consistent_class_order::EnforceConsistentClassOrder as BetterTailwindcssEnforceConsistentClassOrder;
+pub use crate::rules::better_tailwindcss::enforce_consistent_important_position::EnforceConsistentImportantPosition as BetterTailwindcssEnforceConsistentImportantPosition;
+pub use crate::rules::better_tailwindcss::enforce_consistent_line_wrapping::EnforceConsistentLineWrapping as BetterTailwindcssEnforceConsistentLineWrapping;
+pub use crate::rules::better_tailwindcss::enforce_consistent_variable_syntax::EnforceConsistentVariableSyntax as BetterTailwindcssEnforceConsistentVariableSyntax;
+pub use crate::rules::better_tailwindcss::enforce_consistent_variant_order::EnforceConsistentVariantOrder as BetterTailwindcssEnforceConsistentVariantOrder;
+pub use crate::rules::better_tailwindcss::enforce_logical_properties::EnforceLogicalProperties as BetterTailwindcssEnforceLogicalProperties;
+pub use crate::rules::better_tailwindcss::enforce_shorthand_classes::EnforceShorthandClasses as BetterTailwindcssEnforceShorthandClasses;
+pub use crate::rules::better_tailwindcss::no_conflicting_classes::NoConflictingClasses as BetterTailwindcssNoConflictingClasses;
+pub use crate::rules::better_tailwindcss::no_deprecated_classes::NoDeprecatedClasses as BetterTailwindcssNoDeprecatedClasses;
+pub use crate::rules::better_tailwindcss::no_duplicate_classes::NoDuplicateClasses as BetterTailwindcssNoDuplicateClasses;
+pub use crate::rules::better_tailwindcss::no_restricted_classes::NoRestrictedClasses as BetterTailwindcssNoRestrictedClasses;
+pub use crate::rules::better_tailwindcss::no_unknown_classes::NoUnknownClasses as BetterTailwindcssNoUnknownClasses;
+pub use crate::rules::better_tailwindcss::no_unnecessary_whitespace::NoUnnecessaryWhitespace as BetterTailwindcssNoUnnecessaryWhitespace;
 pub use crate::rules::eslint::accessor_pairs::AccessorPairs as EslintAccessorPairs;
 pub use crate::rules::eslint::array_callback_return::ArrayCallbackReturn as EslintArrayCallbackReturn;
 pub use crate::rules::eslint::arrow_body_style::ArrowBodyStyle as EslintArrowBodyStyle;
@@ -863,6 +877,24 @@ use crate::{
 use oxc_semantic::AstTypesBitset;
 #[derive(Debug, Clone)]
 pub enum RuleEnum {
+    BetterTailwindcssEnforceCanonicalClasses(BetterTailwindcssEnforceCanonicalClasses),
+    BetterTailwindcssEnforceConsistentClassOrder(BetterTailwindcssEnforceConsistentClassOrder),
+    BetterTailwindcssEnforceConsistentImportantPosition(
+        BetterTailwindcssEnforceConsistentImportantPosition,
+    ),
+    BetterTailwindcssEnforceConsistentLineWrapping(BetterTailwindcssEnforceConsistentLineWrapping),
+    BetterTailwindcssEnforceConsistentVariableSyntax(
+        BetterTailwindcssEnforceConsistentVariableSyntax,
+    ),
+    BetterTailwindcssEnforceConsistentVariantOrder(BetterTailwindcssEnforceConsistentVariantOrder),
+    BetterTailwindcssEnforceLogicalProperties(BetterTailwindcssEnforceLogicalProperties),
+    BetterTailwindcssEnforceShorthandClasses(BetterTailwindcssEnforceShorthandClasses),
+    BetterTailwindcssNoConflictingClasses(BetterTailwindcssNoConflictingClasses),
+    BetterTailwindcssNoDeprecatedClasses(BetterTailwindcssNoDeprecatedClasses),
+    BetterTailwindcssNoDuplicateClasses(BetterTailwindcssNoDuplicateClasses),
+    BetterTailwindcssNoRestrictedClasses(BetterTailwindcssNoRestrictedClasses),
+    BetterTailwindcssNoUnknownClasses(BetterTailwindcssNoUnknownClasses),
+    BetterTailwindcssNoUnnecessaryWhitespace(BetterTailwindcssNoUnnecessaryWhitespace),
     ImportConsistentTypeSpecifierStyle(ImportConsistentTypeSpecifierStyle),
     ImportDefault(ImportDefault),
     ImportExport(ImportExport),
@@ -1715,7 +1747,35 @@ pub enum RuleEnum {
     VueValidDefineProps(VueValidDefineProps),
     VueValidNextTick(VueValidNextTick),
 }
-const IMPORT_CONSISTENT_TYPE_SPECIFIER_STYLE_ID: usize = 0usize;
+const BETTER_TAILWINDCSS_ENFORCE_CANONICAL_CLASSES_ID: usize = 0usize;
+const BETTER_TAILWINDCSS_ENFORCE_CONSISTENT_CLASS_ORDER_ID: usize =
+    BETTER_TAILWINDCSS_ENFORCE_CANONICAL_CLASSES_ID + 1usize;
+const BETTER_TAILWINDCSS_ENFORCE_CONSISTENT_IMPORTANT_POSITION_ID: usize =
+    BETTER_TAILWINDCSS_ENFORCE_CONSISTENT_CLASS_ORDER_ID + 1usize;
+const BETTER_TAILWINDCSS_ENFORCE_CONSISTENT_LINE_WRAPPING_ID: usize =
+    BETTER_TAILWINDCSS_ENFORCE_CONSISTENT_IMPORTANT_POSITION_ID + 1usize;
+const BETTER_TAILWINDCSS_ENFORCE_CONSISTENT_VARIABLE_SYNTAX_ID: usize =
+    BETTER_TAILWINDCSS_ENFORCE_CONSISTENT_LINE_WRAPPING_ID + 1usize;
+const BETTER_TAILWINDCSS_ENFORCE_CONSISTENT_VARIANT_ORDER_ID: usize =
+    BETTER_TAILWINDCSS_ENFORCE_CONSISTENT_VARIABLE_SYNTAX_ID + 1usize;
+const BETTER_TAILWINDCSS_ENFORCE_LOGICAL_PROPERTIES_ID: usize =
+    BETTER_TAILWINDCSS_ENFORCE_CONSISTENT_VARIANT_ORDER_ID + 1usize;
+const BETTER_TAILWINDCSS_ENFORCE_SHORTHAND_CLASSES_ID: usize =
+    BETTER_TAILWINDCSS_ENFORCE_LOGICAL_PROPERTIES_ID + 1usize;
+const BETTER_TAILWINDCSS_NO_CONFLICTING_CLASSES_ID: usize =
+    BETTER_TAILWINDCSS_ENFORCE_SHORTHAND_CLASSES_ID + 1usize;
+const BETTER_TAILWINDCSS_NO_DEPRECATED_CLASSES_ID: usize =
+    BETTER_TAILWINDCSS_NO_CONFLICTING_CLASSES_ID + 1usize;
+const BETTER_TAILWINDCSS_NO_DUPLICATE_CLASSES_ID: usize =
+    BETTER_TAILWINDCSS_NO_DEPRECATED_CLASSES_ID + 1usize;
+const BETTER_TAILWINDCSS_NO_RESTRICTED_CLASSES_ID: usize =
+    BETTER_TAILWINDCSS_NO_DUPLICATE_CLASSES_ID + 1usize;
+const BETTER_TAILWINDCSS_NO_UNKNOWN_CLASSES_ID: usize =
+    BETTER_TAILWINDCSS_NO_RESTRICTED_CLASSES_ID + 1usize;
+const BETTER_TAILWINDCSS_NO_UNNECESSARY_WHITESPACE_ID: usize =
+    BETTER_TAILWINDCSS_NO_UNKNOWN_CLASSES_ID + 1usize;
+const IMPORT_CONSISTENT_TYPE_SPECIFIER_STYLE_ID: usize =
+    BETTER_TAILWINDCSS_NO_UNNECESSARY_WHITESPACE_ID + 1usize;
 const IMPORT_DEFAULT_ID: usize = IMPORT_CONSISTENT_TYPE_SPECIFIER_STYLE_ID + 1usize;
 const IMPORT_EXPORT_ID: usize = IMPORT_DEFAULT_ID + 1usize;
 const IMPORT_EXPORTS_LAST_ID: usize = IMPORT_EXPORT_ID + 1usize;
@@ -2670,6 +2730,46 @@ const VUE_VALID_NEXT_TICK_ID: usize = VUE_VALID_DEFINE_PROPS_ID + 1usize;
 impl RuleEnum {
     pub fn id(&self) -> usize {
         match self {
+            Self::BetterTailwindcssEnforceCanonicalClasses(_) => {
+                BETTER_TAILWINDCSS_ENFORCE_CANONICAL_CLASSES_ID
+            }
+            Self::BetterTailwindcssEnforceConsistentClassOrder(_) => {
+                BETTER_TAILWINDCSS_ENFORCE_CONSISTENT_CLASS_ORDER_ID
+            }
+            Self::BetterTailwindcssEnforceConsistentImportantPosition(_) => {
+                BETTER_TAILWINDCSS_ENFORCE_CONSISTENT_IMPORTANT_POSITION_ID
+            }
+            Self::BetterTailwindcssEnforceConsistentLineWrapping(_) => {
+                BETTER_TAILWINDCSS_ENFORCE_CONSISTENT_LINE_WRAPPING_ID
+            }
+            Self::BetterTailwindcssEnforceConsistentVariableSyntax(_) => {
+                BETTER_TAILWINDCSS_ENFORCE_CONSISTENT_VARIABLE_SYNTAX_ID
+            }
+            Self::BetterTailwindcssEnforceConsistentVariantOrder(_) => {
+                BETTER_TAILWINDCSS_ENFORCE_CONSISTENT_VARIANT_ORDER_ID
+            }
+            Self::BetterTailwindcssEnforceLogicalProperties(_) => {
+                BETTER_TAILWINDCSS_ENFORCE_LOGICAL_PROPERTIES_ID
+            }
+            Self::BetterTailwindcssEnforceShorthandClasses(_) => {
+                BETTER_TAILWINDCSS_ENFORCE_SHORTHAND_CLASSES_ID
+            }
+            Self::BetterTailwindcssNoConflictingClasses(_) => {
+                BETTER_TAILWINDCSS_NO_CONFLICTING_CLASSES_ID
+            }
+            Self::BetterTailwindcssNoDeprecatedClasses(_) => {
+                BETTER_TAILWINDCSS_NO_DEPRECATED_CLASSES_ID
+            }
+            Self::BetterTailwindcssNoDuplicateClasses(_) => {
+                BETTER_TAILWINDCSS_NO_DUPLICATE_CLASSES_ID
+            }
+            Self::BetterTailwindcssNoRestrictedClasses(_) => {
+                BETTER_TAILWINDCSS_NO_RESTRICTED_CLASSES_ID
+            }
+            Self::BetterTailwindcssNoUnknownClasses(_) => BETTER_TAILWINDCSS_NO_UNKNOWN_CLASSES_ID,
+            Self::BetterTailwindcssNoUnnecessaryWhitespace(_) => {
+                BETTER_TAILWINDCSS_NO_UNNECESSARY_WHITESPACE_ID
+            }
             Self::ImportConsistentTypeSpecifierStyle(_) => {
                 IMPORT_CONSISTENT_TYPE_SPECIFIER_STYLE_ID
             }
@@ -3647,6 +3747,46 @@ impl RuleEnum {
     }
     pub fn name(&self) -> &'static str {
         match self {
+            Self::BetterTailwindcssEnforceCanonicalClasses(_) => {
+                BetterTailwindcssEnforceCanonicalClasses::NAME
+            }
+            Self::BetterTailwindcssEnforceConsistentClassOrder(_) => {
+                BetterTailwindcssEnforceConsistentClassOrder::NAME
+            }
+            Self::BetterTailwindcssEnforceConsistentImportantPosition(_) => {
+                BetterTailwindcssEnforceConsistentImportantPosition::NAME
+            }
+            Self::BetterTailwindcssEnforceConsistentLineWrapping(_) => {
+                BetterTailwindcssEnforceConsistentLineWrapping::NAME
+            }
+            Self::BetterTailwindcssEnforceConsistentVariableSyntax(_) => {
+                BetterTailwindcssEnforceConsistentVariableSyntax::NAME
+            }
+            Self::BetterTailwindcssEnforceConsistentVariantOrder(_) => {
+                BetterTailwindcssEnforceConsistentVariantOrder::NAME
+            }
+            Self::BetterTailwindcssEnforceLogicalProperties(_) => {
+                BetterTailwindcssEnforceLogicalProperties::NAME
+            }
+            Self::BetterTailwindcssEnforceShorthandClasses(_) => {
+                BetterTailwindcssEnforceShorthandClasses::NAME
+            }
+            Self::BetterTailwindcssNoConflictingClasses(_) => {
+                BetterTailwindcssNoConflictingClasses::NAME
+            }
+            Self::BetterTailwindcssNoDeprecatedClasses(_) => {
+                BetterTailwindcssNoDeprecatedClasses::NAME
+            }
+            Self::BetterTailwindcssNoDuplicateClasses(_) => {
+                BetterTailwindcssNoDuplicateClasses::NAME
+            }
+            Self::BetterTailwindcssNoRestrictedClasses(_) => {
+                BetterTailwindcssNoRestrictedClasses::NAME
+            }
+            Self::BetterTailwindcssNoUnknownClasses(_) => BetterTailwindcssNoUnknownClasses::NAME,
+            Self::BetterTailwindcssNoUnnecessaryWhitespace(_) => {
+                BetterTailwindcssNoUnnecessaryWhitespace::NAME
+            }
             Self::ImportConsistentTypeSpecifierStyle(_) => ImportConsistentTypeSpecifierStyle::NAME,
             Self::ImportDefault(_) => ImportDefault::NAME,
             Self::ImportExport(_) => ImportExport::NAME,
@@ -4608,6 +4748,48 @@ impl RuleEnum {
     }
     pub fn category(&self) -> RuleCategory {
         match self {
+            Self::BetterTailwindcssEnforceCanonicalClasses(_) => {
+                BetterTailwindcssEnforceCanonicalClasses::CATEGORY
+            }
+            Self::BetterTailwindcssEnforceConsistentClassOrder(_) => {
+                BetterTailwindcssEnforceConsistentClassOrder::CATEGORY
+            }
+            Self::BetterTailwindcssEnforceConsistentImportantPosition(_) => {
+                BetterTailwindcssEnforceConsistentImportantPosition::CATEGORY
+            }
+            Self::BetterTailwindcssEnforceConsistentLineWrapping(_) => {
+                BetterTailwindcssEnforceConsistentLineWrapping::CATEGORY
+            }
+            Self::BetterTailwindcssEnforceConsistentVariableSyntax(_) => {
+                BetterTailwindcssEnforceConsistentVariableSyntax::CATEGORY
+            }
+            Self::BetterTailwindcssEnforceConsistentVariantOrder(_) => {
+                BetterTailwindcssEnforceConsistentVariantOrder::CATEGORY
+            }
+            Self::BetterTailwindcssEnforceLogicalProperties(_) => {
+                BetterTailwindcssEnforceLogicalProperties::CATEGORY
+            }
+            Self::BetterTailwindcssEnforceShorthandClasses(_) => {
+                BetterTailwindcssEnforceShorthandClasses::CATEGORY
+            }
+            Self::BetterTailwindcssNoConflictingClasses(_) => {
+                BetterTailwindcssNoConflictingClasses::CATEGORY
+            }
+            Self::BetterTailwindcssNoDeprecatedClasses(_) => {
+                BetterTailwindcssNoDeprecatedClasses::CATEGORY
+            }
+            Self::BetterTailwindcssNoDuplicateClasses(_) => {
+                BetterTailwindcssNoDuplicateClasses::CATEGORY
+            }
+            Self::BetterTailwindcssNoRestrictedClasses(_) => {
+                BetterTailwindcssNoRestrictedClasses::CATEGORY
+            }
+            Self::BetterTailwindcssNoUnknownClasses(_) => {
+                BetterTailwindcssNoUnknownClasses::CATEGORY
+            }
+            Self::BetterTailwindcssNoUnnecessaryWhitespace(_) => {
+                BetterTailwindcssNoUnnecessaryWhitespace::CATEGORY
+            }
             Self::ImportConsistentTypeSpecifierStyle(_) => {
                 ImportConsistentTypeSpecifierStyle::CATEGORY
             }
@@ -5628,6 +5810,46 @@ impl RuleEnum {
     #[doc = r" This [`Rule`]'s auto-fix capabilities."]
     pub fn fix(&self) -> RuleFixMeta {
         match self {
+            Self::BetterTailwindcssEnforceCanonicalClasses(_) => {
+                BetterTailwindcssEnforceCanonicalClasses::FIX
+            }
+            Self::BetterTailwindcssEnforceConsistentClassOrder(_) => {
+                BetterTailwindcssEnforceConsistentClassOrder::FIX
+            }
+            Self::BetterTailwindcssEnforceConsistentImportantPosition(_) => {
+                BetterTailwindcssEnforceConsistentImportantPosition::FIX
+            }
+            Self::BetterTailwindcssEnforceConsistentLineWrapping(_) => {
+                BetterTailwindcssEnforceConsistentLineWrapping::FIX
+            }
+            Self::BetterTailwindcssEnforceConsistentVariableSyntax(_) => {
+                BetterTailwindcssEnforceConsistentVariableSyntax::FIX
+            }
+            Self::BetterTailwindcssEnforceConsistentVariantOrder(_) => {
+                BetterTailwindcssEnforceConsistentVariantOrder::FIX
+            }
+            Self::BetterTailwindcssEnforceLogicalProperties(_) => {
+                BetterTailwindcssEnforceLogicalProperties::FIX
+            }
+            Self::BetterTailwindcssEnforceShorthandClasses(_) => {
+                BetterTailwindcssEnforceShorthandClasses::FIX
+            }
+            Self::BetterTailwindcssNoConflictingClasses(_) => {
+                BetterTailwindcssNoConflictingClasses::FIX
+            }
+            Self::BetterTailwindcssNoDeprecatedClasses(_) => {
+                BetterTailwindcssNoDeprecatedClasses::FIX
+            }
+            Self::BetterTailwindcssNoDuplicateClasses(_) => {
+                BetterTailwindcssNoDuplicateClasses::FIX
+            }
+            Self::BetterTailwindcssNoRestrictedClasses(_) => {
+                BetterTailwindcssNoRestrictedClasses::FIX
+            }
+            Self::BetterTailwindcssNoUnknownClasses(_) => BetterTailwindcssNoUnknownClasses::FIX,
+            Self::BetterTailwindcssNoUnnecessaryWhitespace(_) => {
+                BetterTailwindcssNoUnnecessaryWhitespace::FIX
+            }
             Self::ImportConsistentTypeSpecifierStyle(_) => ImportConsistentTypeSpecifierStyle::FIX,
             Self::ImportDefault(_) => ImportDefault::FIX,
             Self::ImportExport(_) => ImportExport::FIX,
@@ -6590,6 +6812,48 @@ impl RuleEnum {
     #[cfg(feature = "ruledocs")]
     pub fn documentation(&self) -> Option<&'static str> {
         match self {
+            Self::BetterTailwindcssEnforceCanonicalClasses(_) => {
+                BetterTailwindcssEnforceCanonicalClasses::documentation()
+            }
+            Self::BetterTailwindcssEnforceConsistentClassOrder(_) => {
+                BetterTailwindcssEnforceConsistentClassOrder::documentation()
+            }
+            Self::BetterTailwindcssEnforceConsistentImportantPosition(_) => {
+                BetterTailwindcssEnforceConsistentImportantPosition::documentation()
+            }
+            Self::BetterTailwindcssEnforceConsistentLineWrapping(_) => {
+                BetterTailwindcssEnforceConsistentLineWrapping::documentation()
+            }
+            Self::BetterTailwindcssEnforceConsistentVariableSyntax(_) => {
+                BetterTailwindcssEnforceConsistentVariableSyntax::documentation()
+            }
+            Self::BetterTailwindcssEnforceConsistentVariantOrder(_) => {
+                BetterTailwindcssEnforceConsistentVariantOrder::documentation()
+            }
+            Self::BetterTailwindcssEnforceLogicalProperties(_) => {
+                BetterTailwindcssEnforceLogicalProperties::documentation()
+            }
+            Self::BetterTailwindcssEnforceShorthandClasses(_) => {
+                BetterTailwindcssEnforceShorthandClasses::documentation()
+            }
+            Self::BetterTailwindcssNoConflictingClasses(_) => {
+                BetterTailwindcssNoConflictingClasses::documentation()
+            }
+            Self::BetterTailwindcssNoDeprecatedClasses(_) => {
+                BetterTailwindcssNoDeprecatedClasses::documentation()
+            }
+            Self::BetterTailwindcssNoDuplicateClasses(_) => {
+                BetterTailwindcssNoDuplicateClasses::documentation()
+            }
+            Self::BetterTailwindcssNoRestrictedClasses(_) => {
+                BetterTailwindcssNoRestrictedClasses::documentation()
+            }
+            Self::BetterTailwindcssNoUnknownClasses(_) => {
+                BetterTailwindcssNoUnknownClasses::documentation()
+            }
+            Self::BetterTailwindcssNoUnnecessaryWhitespace(_) => {
+                BetterTailwindcssNoUnnecessaryWhitespace::documentation()
+            }
             Self::ImportConsistentTypeSpecifierStyle(_) => {
                 ImportConsistentTypeSpecifierStyle::documentation()
             }
@@ -7823,6 +8087,64 @@ impl RuleEnum {
         generator: &mut schemars::SchemaGenerator,
     ) -> Option<schemars::schema::Schema> {
         match self {
+            Self::BetterTailwindcssEnforceCanonicalClasses(_) => {
+                BetterTailwindcssEnforceCanonicalClasses::config_schema(generator)
+                    .or_else(|| BetterTailwindcssEnforceCanonicalClasses::schema(generator))
+            }
+            Self::BetterTailwindcssEnforceConsistentClassOrder(_) => {
+                BetterTailwindcssEnforceConsistentClassOrder::config_schema(generator)
+                    .or_else(|| BetterTailwindcssEnforceConsistentClassOrder::schema(generator))
+            }
+            Self::BetterTailwindcssEnforceConsistentImportantPosition(_) => {
+                BetterTailwindcssEnforceConsistentImportantPosition::config_schema(generator)
+                    .or_else(|| {
+                        BetterTailwindcssEnforceConsistentImportantPosition::schema(generator)
+                    })
+            }
+            Self::BetterTailwindcssEnforceConsistentLineWrapping(_) => {
+                BetterTailwindcssEnforceConsistentLineWrapping::config_schema(generator)
+                    .or_else(|| BetterTailwindcssEnforceConsistentLineWrapping::schema(generator))
+            }
+            Self::BetterTailwindcssEnforceConsistentVariableSyntax(_) => {
+                BetterTailwindcssEnforceConsistentVariableSyntax::config_schema(generator)
+                    .or_else(|| BetterTailwindcssEnforceConsistentVariableSyntax::schema(generator))
+            }
+            Self::BetterTailwindcssEnforceConsistentVariantOrder(_) => {
+                BetterTailwindcssEnforceConsistentVariantOrder::config_schema(generator)
+                    .or_else(|| BetterTailwindcssEnforceConsistentVariantOrder::schema(generator))
+            }
+            Self::BetterTailwindcssEnforceLogicalProperties(_) => {
+                BetterTailwindcssEnforceLogicalProperties::config_schema(generator)
+                    .or_else(|| BetterTailwindcssEnforceLogicalProperties::schema(generator))
+            }
+            Self::BetterTailwindcssEnforceShorthandClasses(_) => {
+                BetterTailwindcssEnforceShorthandClasses::config_schema(generator)
+                    .or_else(|| BetterTailwindcssEnforceShorthandClasses::schema(generator))
+            }
+            Self::BetterTailwindcssNoConflictingClasses(_) => {
+                BetterTailwindcssNoConflictingClasses::config_schema(generator)
+                    .or_else(|| BetterTailwindcssNoConflictingClasses::schema(generator))
+            }
+            Self::BetterTailwindcssNoDeprecatedClasses(_) => {
+                BetterTailwindcssNoDeprecatedClasses::config_schema(generator)
+                    .or_else(|| BetterTailwindcssNoDeprecatedClasses::schema(generator))
+            }
+            Self::BetterTailwindcssNoDuplicateClasses(_) => {
+                BetterTailwindcssNoDuplicateClasses::config_schema(generator)
+                    .or_else(|| BetterTailwindcssNoDuplicateClasses::schema(generator))
+            }
+            Self::BetterTailwindcssNoRestrictedClasses(_) => {
+                BetterTailwindcssNoRestrictedClasses::config_schema(generator)
+                    .or_else(|| BetterTailwindcssNoRestrictedClasses::schema(generator))
+            }
+            Self::BetterTailwindcssNoUnknownClasses(_) => {
+                BetterTailwindcssNoUnknownClasses::config_schema(generator)
+                    .or_else(|| BetterTailwindcssNoUnknownClasses::schema(generator))
+            }
+            Self::BetterTailwindcssNoUnnecessaryWhitespace(_) => {
+                BetterTailwindcssNoUnnecessaryWhitespace::config_schema(generator)
+                    .or_else(|| BetterTailwindcssNoUnnecessaryWhitespace::schema(generator))
+            }
             Self::ImportConsistentTypeSpecifierStyle(_) => {
                 ImportConsistentTypeSpecifierStyle::config_schema(generator)
                     .or_else(|| ImportConsistentTypeSpecifierStyle::schema(generator))
@@ -10250,6 +10572,20 @@ impl RuleEnum {
     }
     pub fn plugin_name(&self) -> &'static str {
         match self {
+            Self::BetterTailwindcssEnforceCanonicalClasses(_) => "better_tailwindcss",
+            Self::BetterTailwindcssEnforceConsistentClassOrder(_) => "better_tailwindcss",
+            Self::BetterTailwindcssEnforceConsistentImportantPosition(_) => "better_tailwindcss",
+            Self::BetterTailwindcssEnforceConsistentLineWrapping(_) => "better_tailwindcss",
+            Self::BetterTailwindcssEnforceConsistentVariableSyntax(_) => "better_tailwindcss",
+            Self::BetterTailwindcssEnforceConsistentVariantOrder(_) => "better_tailwindcss",
+            Self::BetterTailwindcssEnforceLogicalProperties(_) => "better_tailwindcss",
+            Self::BetterTailwindcssEnforceShorthandClasses(_) => "better_tailwindcss",
+            Self::BetterTailwindcssNoConflictingClasses(_) => "better_tailwindcss",
+            Self::BetterTailwindcssNoDeprecatedClasses(_) => "better_tailwindcss",
+            Self::BetterTailwindcssNoDuplicateClasses(_) => "better_tailwindcss",
+            Self::BetterTailwindcssNoRestrictedClasses(_) => "better_tailwindcss",
+            Self::BetterTailwindcssNoUnknownClasses(_) => "better_tailwindcss",
+            Self::BetterTailwindcssNoUnnecessaryWhitespace(_) => "better_tailwindcss",
             Self::ImportConsistentTypeSpecifierStyle(_) => "import",
             Self::ImportDefault(_) => "import",
             Self::ImportExport(_) => "import",
@@ -11100,6 +11436,76 @@ impl RuleEnum {
         value: serde_json::Value,
     ) -> Result<Self, serde_json::error::Error> {
         match self {
+            Self::BetterTailwindcssEnforceCanonicalClasses(_) => {
+                Ok(Self::BetterTailwindcssEnforceCanonicalClasses(
+                    BetterTailwindcssEnforceCanonicalClasses::from_configuration(value)?,
+                ))
+            }
+            Self::BetterTailwindcssEnforceConsistentClassOrder(_) => {
+                Ok(Self::BetterTailwindcssEnforceConsistentClassOrder(
+                    BetterTailwindcssEnforceConsistentClassOrder::from_configuration(value)?,
+                ))
+            }
+            Self::BetterTailwindcssEnforceConsistentImportantPosition(_) => {
+                Ok(Self::BetterTailwindcssEnforceConsistentImportantPosition(
+                    BetterTailwindcssEnforceConsistentImportantPosition::from_configuration(value)?,
+                ))
+            }
+            Self::BetterTailwindcssEnforceConsistentLineWrapping(_) => {
+                Ok(Self::BetterTailwindcssEnforceConsistentLineWrapping(
+                    BetterTailwindcssEnforceConsistentLineWrapping::from_configuration(value)?,
+                ))
+            }
+            Self::BetterTailwindcssEnforceConsistentVariableSyntax(_) => {
+                Ok(Self::BetterTailwindcssEnforceConsistentVariableSyntax(
+                    BetterTailwindcssEnforceConsistentVariableSyntax::from_configuration(value)?,
+                ))
+            }
+            Self::BetterTailwindcssEnforceConsistentVariantOrder(_) => {
+                Ok(Self::BetterTailwindcssEnforceConsistentVariantOrder(
+                    BetterTailwindcssEnforceConsistentVariantOrder::from_configuration(value)?,
+                ))
+            }
+            Self::BetterTailwindcssEnforceLogicalProperties(_) => {
+                Ok(Self::BetterTailwindcssEnforceLogicalProperties(
+                    BetterTailwindcssEnforceLogicalProperties::from_configuration(value)?,
+                ))
+            }
+            Self::BetterTailwindcssEnforceShorthandClasses(_) => {
+                Ok(Self::BetterTailwindcssEnforceShorthandClasses(
+                    BetterTailwindcssEnforceShorthandClasses::from_configuration(value)?,
+                ))
+            }
+            Self::BetterTailwindcssNoConflictingClasses(_) => {
+                Ok(Self::BetterTailwindcssNoConflictingClasses(
+                    BetterTailwindcssNoConflictingClasses::from_configuration(value)?,
+                ))
+            }
+            Self::BetterTailwindcssNoDeprecatedClasses(_) => {
+                Ok(Self::BetterTailwindcssNoDeprecatedClasses(
+                    BetterTailwindcssNoDeprecatedClasses::from_configuration(value)?,
+                ))
+            }
+            Self::BetterTailwindcssNoDuplicateClasses(_) => {
+                Ok(Self::BetterTailwindcssNoDuplicateClasses(
+                    BetterTailwindcssNoDuplicateClasses::from_configuration(value)?,
+                ))
+            }
+            Self::BetterTailwindcssNoRestrictedClasses(_) => {
+                Ok(Self::BetterTailwindcssNoRestrictedClasses(
+                    BetterTailwindcssNoRestrictedClasses::from_configuration(value)?,
+                ))
+            }
+            Self::BetterTailwindcssNoUnknownClasses(_) => {
+                Ok(Self::BetterTailwindcssNoUnknownClasses(
+                    BetterTailwindcssNoUnknownClasses::from_configuration(value)?,
+                ))
+            }
+            Self::BetterTailwindcssNoUnnecessaryWhitespace(_) => {
+                Ok(Self::BetterTailwindcssNoUnnecessaryWhitespace(
+                    BetterTailwindcssNoUnnecessaryWhitespace::from_configuration(value)?,
+                ))
+            }
             Self::ImportConsistentTypeSpecifierStyle(_) => {
                 Ok(Self::ImportConsistentTypeSpecifierStyle(
                     ImportConsistentTypeSpecifierStyle::from_configuration(value)?,
@@ -13819,6 +14225,22 @@ impl RuleEnum {
     }
     pub fn to_configuration(&self) -> Option<Result<serde_json::Value, serde_json::Error>> {
         match self {
+            Self::BetterTailwindcssEnforceCanonicalClasses(rule) => rule.to_configuration(),
+            Self::BetterTailwindcssEnforceConsistentClassOrder(rule) => rule.to_configuration(),
+            Self::BetterTailwindcssEnforceConsistentImportantPosition(rule) => {
+                rule.to_configuration()
+            }
+            Self::BetterTailwindcssEnforceConsistentLineWrapping(rule) => rule.to_configuration(),
+            Self::BetterTailwindcssEnforceConsistentVariableSyntax(rule) => rule.to_configuration(),
+            Self::BetterTailwindcssEnforceConsistentVariantOrder(rule) => rule.to_configuration(),
+            Self::BetterTailwindcssEnforceLogicalProperties(rule) => rule.to_configuration(),
+            Self::BetterTailwindcssEnforceShorthandClasses(rule) => rule.to_configuration(),
+            Self::BetterTailwindcssNoConflictingClasses(rule) => rule.to_configuration(),
+            Self::BetterTailwindcssNoDeprecatedClasses(rule) => rule.to_configuration(),
+            Self::BetterTailwindcssNoDuplicateClasses(rule) => rule.to_configuration(),
+            Self::BetterTailwindcssNoRestrictedClasses(rule) => rule.to_configuration(),
+            Self::BetterTailwindcssNoUnknownClasses(rule) => rule.to_configuration(),
+            Self::BetterTailwindcssNoUnnecessaryWhitespace(rule) => rule.to_configuration(),
             Self::ImportConsistentTypeSpecifierStyle(rule) => rule.to_configuration(),
             Self::ImportDefault(rule) => rule.to_configuration(),
             Self::ImportExport(rule) => rule.to_configuration(),
@@ -14671,6 +15093,20 @@ impl RuleEnum {
     #[inline(never)]
     fn run_dispatch<'a>(&self, node: &AstNode<'a>, ctx: &LintContext<'a>) {
         match self {
+            Self::BetterTailwindcssEnforceCanonicalClasses(rule) => rule.run(node, ctx),
+            Self::BetterTailwindcssEnforceConsistentClassOrder(rule) => rule.run(node, ctx),
+            Self::BetterTailwindcssEnforceConsistentImportantPosition(rule) => rule.run(node, ctx),
+            Self::BetterTailwindcssEnforceConsistentLineWrapping(rule) => rule.run(node, ctx),
+            Self::BetterTailwindcssEnforceConsistentVariableSyntax(rule) => rule.run(node, ctx),
+            Self::BetterTailwindcssEnforceConsistentVariantOrder(rule) => rule.run(node, ctx),
+            Self::BetterTailwindcssEnforceLogicalProperties(rule) => rule.run(node, ctx),
+            Self::BetterTailwindcssEnforceShorthandClasses(rule) => rule.run(node, ctx),
+            Self::BetterTailwindcssNoConflictingClasses(rule) => rule.run(node, ctx),
+            Self::BetterTailwindcssNoDeprecatedClasses(rule) => rule.run(node, ctx),
+            Self::BetterTailwindcssNoDuplicateClasses(rule) => rule.run(node, ctx),
+            Self::BetterTailwindcssNoRestrictedClasses(rule) => rule.run(node, ctx),
+            Self::BetterTailwindcssNoUnknownClasses(rule) => rule.run(node, ctx),
+            Self::BetterTailwindcssNoUnnecessaryWhitespace(rule) => rule.run(node, ctx),
             Self::ImportConsistentTypeSpecifierStyle(rule) => rule.run(node, ctx),
             Self::ImportDefault(rule) => rule.run(node, ctx),
             Self::ImportExport(rule) => rule.run(node, ctx),
@@ -15531,6 +15967,20 @@ impl RuleEnum {
     #[inline(never)]
     fn run_once_dispatch(&self, ctx: &LintContext<'_>) {
         match self {
+            Self::BetterTailwindcssEnforceCanonicalClasses(rule) => rule.run_once(ctx),
+            Self::BetterTailwindcssEnforceConsistentClassOrder(rule) => rule.run_once(ctx),
+            Self::BetterTailwindcssEnforceConsistentImportantPosition(rule) => rule.run_once(ctx),
+            Self::BetterTailwindcssEnforceConsistentLineWrapping(rule) => rule.run_once(ctx),
+            Self::BetterTailwindcssEnforceConsistentVariableSyntax(rule) => rule.run_once(ctx),
+            Self::BetterTailwindcssEnforceConsistentVariantOrder(rule) => rule.run_once(ctx),
+            Self::BetterTailwindcssEnforceLogicalProperties(rule) => rule.run_once(ctx),
+            Self::BetterTailwindcssEnforceShorthandClasses(rule) => rule.run_once(ctx),
+            Self::BetterTailwindcssNoConflictingClasses(rule) => rule.run_once(ctx),
+            Self::BetterTailwindcssNoDeprecatedClasses(rule) => rule.run_once(ctx),
+            Self::BetterTailwindcssNoDuplicateClasses(rule) => rule.run_once(ctx),
+            Self::BetterTailwindcssNoRestrictedClasses(rule) => rule.run_once(ctx),
+            Self::BetterTailwindcssNoUnknownClasses(rule) => rule.run_once(ctx),
+            Self::BetterTailwindcssNoUnnecessaryWhitespace(rule) => rule.run_once(ctx),
             Self::ImportConsistentTypeSpecifierStyle(rule) => rule.run_once(ctx),
             Self::ImportDefault(rule) => rule.run_once(ctx),
             Self::ImportExport(rule) => rule.run_once(ctx),
@@ -16394,6 +16844,46 @@ impl RuleEnum {
         ctx: &'c LintContext<'a>,
     ) {
         match self {
+            Self::BetterTailwindcssEnforceCanonicalClasses(rule) => {
+                rule.run_on_jest_node(jest_node, ctx)
+            }
+            Self::BetterTailwindcssEnforceConsistentClassOrder(rule) => {
+                rule.run_on_jest_node(jest_node, ctx)
+            }
+            Self::BetterTailwindcssEnforceConsistentImportantPosition(rule) => {
+                rule.run_on_jest_node(jest_node, ctx)
+            }
+            Self::BetterTailwindcssEnforceConsistentLineWrapping(rule) => {
+                rule.run_on_jest_node(jest_node, ctx)
+            }
+            Self::BetterTailwindcssEnforceConsistentVariableSyntax(rule) => {
+                rule.run_on_jest_node(jest_node, ctx)
+            }
+            Self::BetterTailwindcssEnforceConsistentVariantOrder(rule) => {
+                rule.run_on_jest_node(jest_node, ctx)
+            }
+            Self::BetterTailwindcssEnforceLogicalProperties(rule) => {
+                rule.run_on_jest_node(jest_node, ctx)
+            }
+            Self::BetterTailwindcssEnforceShorthandClasses(rule) => {
+                rule.run_on_jest_node(jest_node, ctx)
+            }
+            Self::BetterTailwindcssNoConflictingClasses(rule) => {
+                rule.run_on_jest_node(jest_node, ctx)
+            }
+            Self::BetterTailwindcssNoDeprecatedClasses(rule) => {
+                rule.run_on_jest_node(jest_node, ctx)
+            }
+            Self::BetterTailwindcssNoDuplicateClasses(rule) => {
+                rule.run_on_jest_node(jest_node, ctx)
+            }
+            Self::BetterTailwindcssNoRestrictedClasses(rule) => {
+                rule.run_on_jest_node(jest_node, ctx)
+            }
+            Self::BetterTailwindcssNoUnknownClasses(rule) => rule.run_on_jest_node(jest_node, ctx),
+            Self::BetterTailwindcssNoUnnecessaryWhitespace(rule) => {
+                rule.run_on_jest_node(jest_node, ctx)
+            }
             Self::ImportConsistentTypeSpecifierStyle(rule) => rule.run_on_jest_node(jest_node, ctx),
             Self::ImportDefault(rule) => rule.run_on_jest_node(jest_node, ctx),
             Self::ImportExport(rule) => rule.run_on_jest_node(jest_node, ctx),
@@ -17369,6 +17859,20 @@ impl RuleEnum {
     }
     pub(crate) fn should_run(&self, ctx: &ContextHost) -> bool {
         match self {
+            Self::BetterTailwindcssEnforceCanonicalClasses(rule) => rule.should_run(ctx),
+            Self::BetterTailwindcssEnforceConsistentClassOrder(rule) => rule.should_run(ctx),
+            Self::BetterTailwindcssEnforceConsistentImportantPosition(rule) => rule.should_run(ctx),
+            Self::BetterTailwindcssEnforceConsistentLineWrapping(rule) => rule.should_run(ctx),
+            Self::BetterTailwindcssEnforceConsistentVariableSyntax(rule) => rule.should_run(ctx),
+            Self::BetterTailwindcssEnforceConsistentVariantOrder(rule) => rule.should_run(ctx),
+            Self::BetterTailwindcssEnforceLogicalProperties(rule) => rule.should_run(ctx),
+            Self::BetterTailwindcssEnforceShorthandClasses(rule) => rule.should_run(ctx),
+            Self::BetterTailwindcssNoConflictingClasses(rule) => rule.should_run(ctx),
+            Self::BetterTailwindcssNoDeprecatedClasses(rule) => rule.should_run(ctx),
+            Self::BetterTailwindcssNoDuplicateClasses(rule) => rule.should_run(ctx),
+            Self::BetterTailwindcssNoRestrictedClasses(rule) => rule.should_run(ctx),
+            Self::BetterTailwindcssNoUnknownClasses(rule) => rule.should_run(ctx),
+            Self::BetterTailwindcssNoUnnecessaryWhitespace(rule) => rule.should_run(ctx),
             Self::ImportConsistentTypeSpecifierStyle(rule) => rule.should_run(ctx),
             Self::ImportDefault(rule) => rule.should_run(ctx),
             Self::ImportExport(rule) => rule.should_run(ctx),
@@ -18216,6 +18720,48 @@ impl RuleEnum {
     }
     pub fn is_tsgolint_rule(&self) -> bool {
         match self {
+            Self::BetterTailwindcssEnforceCanonicalClasses(_) => {
+                BetterTailwindcssEnforceCanonicalClasses::IS_TSGOLINT_RULE
+            }
+            Self::BetterTailwindcssEnforceConsistentClassOrder(_) => {
+                BetterTailwindcssEnforceConsistentClassOrder::IS_TSGOLINT_RULE
+            }
+            Self::BetterTailwindcssEnforceConsistentImportantPosition(_) => {
+                BetterTailwindcssEnforceConsistentImportantPosition::IS_TSGOLINT_RULE
+            }
+            Self::BetterTailwindcssEnforceConsistentLineWrapping(_) => {
+                BetterTailwindcssEnforceConsistentLineWrapping::IS_TSGOLINT_RULE
+            }
+            Self::BetterTailwindcssEnforceConsistentVariableSyntax(_) => {
+                BetterTailwindcssEnforceConsistentVariableSyntax::IS_TSGOLINT_RULE
+            }
+            Self::BetterTailwindcssEnforceConsistentVariantOrder(_) => {
+                BetterTailwindcssEnforceConsistentVariantOrder::IS_TSGOLINT_RULE
+            }
+            Self::BetterTailwindcssEnforceLogicalProperties(_) => {
+                BetterTailwindcssEnforceLogicalProperties::IS_TSGOLINT_RULE
+            }
+            Self::BetterTailwindcssEnforceShorthandClasses(_) => {
+                BetterTailwindcssEnforceShorthandClasses::IS_TSGOLINT_RULE
+            }
+            Self::BetterTailwindcssNoConflictingClasses(_) => {
+                BetterTailwindcssNoConflictingClasses::IS_TSGOLINT_RULE
+            }
+            Self::BetterTailwindcssNoDeprecatedClasses(_) => {
+                BetterTailwindcssNoDeprecatedClasses::IS_TSGOLINT_RULE
+            }
+            Self::BetterTailwindcssNoDuplicateClasses(_) => {
+                BetterTailwindcssNoDuplicateClasses::IS_TSGOLINT_RULE
+            }
+            Self::BetterTailwindcssNoRestrictedClasses(_) => {
+                BetterTailwindcssNoRestrictedClasses::IS_TSGOLINT_RULE
+            }
+            Self::BetterTailwindcssNoUnknownClasses(_) => {
+                BetterTailwindcssNoUnknownClasses::IS_TSGOLINT_RULE
+            }
+            Self::BetterTailwindcssNoUnnecessaryWhitespace(_) => {
+                BetterTailwindcssNoUnnecessaryWhitespace::IS_TSGOLINT_RULE
+            }
             Self::ImportConsistentTypeSpecifierStyle(_) => {
                 ImportConsistentTypeSpecifierStyle::IS_TSGOLINT_RULE
             }
@@ -19447,6 +19993,48 @@ impl RuleEnum {
     #[cfg(feature = "ruledocs")]
     pub fn version(&self) -> &'static str {
         match self {
+            Self::BetterTailwindcssEnforceCanonicalClasses(_) => {
+                BetterTailwindcssEnforceCanonicalClasses::VERSION
+            }
+            Self::BetterTailwindcssEnforceConsistentClassOrder(_) => {
+                BetterTailwindcssEnforceConsistentClassOrder::VERSION
+            }
+            Self::BetterTailwindcssEnforceConsistentImportantPosition(_) => {
+                BetterTailwindcssEnforceConsistentImportantPosition::VERSION
+            }
+            Self::BetterTailwindcssEnforceConsistentLineWrapping(_) => {
+                BetterTailwindcssEnforceConsistentLineWrapping::VERSION
+            }
+            Self::BetterTailwindcssEnforceConsistentVariableSyntax(_) => {
+                BetterTailwindcssEnforceConsistentVariableSyntax::VERSION
+            }
+            Self::BetterTailwindcssEnforceConsistentVariantOrder(_) => {
+                BetterTailwindcssEnforceConsistentVariantOrder::VERSION
+            }
+            Self::BetterTailwindcssEnforceLogicalProperties(_) => {
+                BetterTailwindcssEnforceLogicalProperties::VERSION
+            }
+            Self::BetterTailwindcssEnforceShorthandClasses(_) => {
+                BetterTailwindcssEnforceShorthandClasses::VERSION
+            }
+            Self::BetterTailwindcssNoConflictingClasses(_) => {
+                BetterTailwindcssNoConflictingClasses::VERSION
+            }
+            Self::BetterTailwindcssNoDeprecatedClasses(_) => {
+                BetterTailwindcssNoDeprecatedClasses::VERSION
+            }
+            Self::BetterTailwindcssNoDuplicateClasses(_) => {
+                BetterTailwindcssNoDuplicateClasses::VERSION
+            }
+            Self::BetterTailwindcssNoRestrictedClasses(_) => {
+                BetterTailwindcssNoRestrictedClasses::VERSION
+            }
+            Self::BetterTailwindcssNoUnknownClasses(_) => {
+                BetterTailwindcssNoUnknownClasses::VERSION
+            }
+            Self::BetterTailwindcssNoUnnecessaryWhitespace(_) => {
+                BetterTailwindcssNoUnnecessaryWhitespace::VERSION
+            }
             Self::ImportConsistentTypeSpecifierStyle(_) => {
                 ImportConsistentTypeSpecifierStyle::VERSION
             }
@@ -20467,6 +21055,48 @@ impl RuleEnum {
     #[doc = r" Whether this rule declares a configuration type."]
     pub fn has_config(&self) -> bool {
         match self {
+            Self::BetterTailwindcssEnforceCanonicalClasses(_) => {
+                BetterTailwindcssEnforceCanonicalClasses::HAS_CONFIG
+            }
+            Self::BetterTailwindcssEnforceConsistentClassOrder(_) => {
+                BetterTailwindcssEnforceConsistentClassOrder::HAS_CONFIG
+            }
+            Self::BetterTailwindcssEnforceConsistentImportantPosition(_) => {
+                BetterTailwindcssEnforceConsistentImportantPosition::HAS_CONFIG
+            }
+            Self::BetterTailwindcssEnforceConsistentLineWrapping(_) => {
+                BetterTailwindcssEnforceConsistentLineWrapping::HAS_CONFIG
+            }
+            Self::BetterTailwindcssEnforceConsistentVariableSyntax(_) => {
+                BetterTailwindcssEnforceConsistentVariableSyntax::HAS_CONFIG
+            }
+            Self::BetterTailwindcssEnforceConsistentVariantOrder(_) => {
+                BetterTailwindcssEnforceConsistentVariantOrder::HAS_CONFIG
+            }
+            Self::BetterTailwindcssEnforceLogicalProperties(_) => {
+                BetterTailwindcssEnforceLogicalProperties::HAS_CONFIG
+            }
+            Self::BetterTailwindcssEnforceShorthandClasses(_) => {
+                BetterTailwindcssEnforceShorthandClasses::HAS_CONFIG
+            }
+            Self::BetterTailwindcssNoConflictingClasses(_) => {
+                BetterTailwindcssNoConflictingClasses::HAS_CONFIG
+            }
+            Self::BetterTailwindcssNoDeprecatedClasses(_) => {
+                BetterTailwindcssNoDeprecatedClasses::HAS_CONFIG
+            }
+            Self::BetterTailwindcssNoDuplicateClasses(_) => {
+                BetterTailwindcssNoDuplicateClasses::HAS_CONFIG
+            }
+            Self::BetterTailwindcssNoRestrictedClasses(_) => {
+                BetterTailwindcssNoRestrictedClasses::HAS_CONFIG
+            }
+            Self::BetterTailwindcssNoUnknownClasses(_) => {
+                BetterTailwindcssNoUnknownClasses::HAS_CONFIG
+            }
+            Self::BetterTailwindcssNoUnnecessaryWhitespace(_) => {
+                BetterTailwindcssNoUnnecessaryWhitespace::HAS_CONFIG
+            }
             Self::ImportConsistentTypeSpecifierStyle(_) => {
                 ImportConsistentTypeSpecifierStyle::HAS_CONFIG
             }
@@ -21528,6 +22158,46 @@ impl RuleEnum {
     #[cfg(feature = "ruledocs")]
     pub fn info(&self) -> RuleInfo {
         match self {
+            Self::BetterTailwindcssEnforceCanonicalClasses(_) => {
+                BetterTailwindcssEnforceCanonicalClasses::INFO
+            }
+            Self::BetterTailwindcssEnforceConsistentClassOrder(_) => {
+                BetterTailwindcssEnforceConsistentClassOrder::INFO
+            }
+            Self::BetterTailwindcssEnforceConsistentImportantPosition(_) => {
+                BetterTailwindcssEnforceConsistentImportantPosition::INFO
+            }
+            Self::BetterTailwindcssEnforceConsistentLineWrapping(_) => {
+                BetterTailwindcssEnforceConsistentLineWrapping::INFO
+            }
+            Self::BetterTailwindcssEnforceConsistentVariableSyntax(_) => {
+                BetterTailwindcssEnforceConsistentVariableSyntax::INFO
+            }
+            Self::BetterTailwindcssEnforceConsistentVariantOrder(_) => {
+                BetterTailwindcssEnforceConsistentVariantOrder::INFO
+            }
+            Self::BetterTailwindcssEnforceLogicalProperties(_) => {
+                BetterTailwindcssEnforceLogicalProperties::INFO
+            }
+            Self::BetterTailwindcssEnforceShorthandClasses(_) => {
+                BetterTailwindcssEnforceShorthandClasses::INFO
+            }
+            Self::BetterTailwindcssNoConflictingClasses(_) => {
+                BetterTailwindcssNoConflictingClasses::INFO
+            }
+            Self::BetterTailwindcssNoDeprecatedClasses(_) => {
+                BetterTailwindcssNoDeprecatedClasses::INFO
+            }
+            Self::BetterTailwindcssNoDuplicateClasses(_) => {
+                BetterTailwindcssNoDuplicateClasses::INFO
+            }
+            Self::BetterTailwindcssNoRestrictedClasses(_) => {
+                BetterTailwindcssNoRestrictedClasses::INFO
+            }
+            Self::BetterTailwindcssNoUnknownClasses(_) => BetterTailwindcssNoUnknownClasses::INFO,
+            Self::BetterTailwindcssNoUnnecessaryWhitespace(_) => {
+                BetterTailwindcssNoUnnecessaryWhitespace::INFO
+            }
             Self::ImportConsistentTypeSpecifierStyle(_) => ImportConsistentTypeSpecifierStyle::INFO,
             Self::ImportDefault(_) => ImportDefault::INFO,
             Self::ImportExport(_) => ImportExport::INFO,
@@ -22494,6 +23164,20 @@ impl RuleEnum {
     }
     pub fn types_info(&self) -> Option<&'static AstTypesBitset> {
         match self {
+            Self::BetterTailwindcssEnforceCanonicalClasses(rule) => rule.types_info(),
+            Self::BetterTailwindcssEnforceConsistentClassOrder(rule) => rule.types_info(),
+            Self::BetterTailwindcssEnforceConsistentImportantPosition(rule) => rule.types_info(),
+            Self::BetterTailwindcssEnforceConsistentLineWrapping(rule) => rule.types_info(),
+            Self::BetterTailwindcssEnforceConsistentVariableSyntax(rule) => rule.types_info(),
+            Self::BetterTailwindcssEnforceConsistentVariantOrder(rule) => rule.types_info(),
+            Self::BetterTailwindcssEnforceLogicalProperties(rule) => rule.types_info(),
+            Self::BetterTailwindcssEnforceShorthandClasses(rule) => rule.types_info(),
+            Self::BetterTailwindcssNoConflictingClasses(rule) => rule.types_info(),
+            Self::BetterTailwindcssNoDeprecatedClasses(rule) => rule.types_info(),
+            Self::BetterTailwindcssNoDuplicateClasses(rule) => rule.types_info(),
+            Self::BetterTailwindcssNoRestrictedClasses(rule) => rule.types_info(),
+            Self::BetterTailwindcssNoUnknownClasses(rule) => rule.types_info(),
+            Self::BetterTailwindcssNoUnnecessaryWhitespace(rule) => rule.types_info(),
             Self::ImportConsistentTypeSpecifierStyle(rule) => rule.types_info(),
             Self::ImportDefault(rule) => rule.types_info(),
             Self::ImportExport(rule) => rule.types_info(),
@@ -23341,6 +24025,20 @@ impl RuleEnum {
     }
     pub fn run_info(&self) -> RuleRunFunctionsImplemented {
         match self {
+            Self::BetterTailwindcssEnforceCanonicalClasses(rule) => rule.run_info(),
+            Self::BetterTailwindcssEnforceConsistentClassOrder(rule) => rule.run_info(),
+            Self::BetterTailwindcssEnforceConsistentImportantPosition(rule) => rule.run_info(),
+            Self::BetterTailwindcssEnforceConsistentLineWrapping(rule) => rule.run_info(),
+            Self::BetterTailwindcssEnforceConsistentVariableSyntax(rule) => rule.run_info(),
+            Self::BetterTailwindcssEnforceConsistentVariantOrder(rule) => rule.run_info(),
+            Self::BetterTailwindcssEnforceLogicalProperties(rule) => rule.run_info(),
+            Self::BetterTailwindcssEnforceShorthandClasses(rule) => rule.run_info(),
+            Self::BetterTailwindcssNoConflictingClasses(rule) => rule.run_info(),
+            Self::BetterTailwindcssNoDeprecatedClasses(rule) => rule.run_info(),
+            Self::BetterTailwindcssNoDuplicateClasses(rule) => rule.run_info(),
+            Self::BetterTailwindcssNoRestrictedClasses(rule) => rule.run_info(),
+            Self::BetterTailwindcssNoUnknownClasses(rule) => rule.run_info(),
+            Self::BetterTailwindcssNoUnnecessaryWhitespace(rule) => rule.run_info(),
             Self::ImportConsistentTypeSpecifierStyle(rule) => rule.run_info(),
             Self::ImportDefault(rule) => rule.run_info(),
             Self::ImportExport(rule) => rule.run_info(),
@@ -24210,6 +24908,46 @@ impl PartialOrd for RuleEnum {
 }
 pub static RULES: std::sync::LazyLock<Vec<RuleEnum>> = std::sync::LazyLock::new(|| {
     vec![
+        RuleEnum::BetterTailwindcssEnforceCanonicalClasses(
+            BetterTailwindcssEnforceCanonicalClasses::default(),
+        ),
+        RuleEnum::BetterTailwindcssEnforceConsistentClassOrder(
+            BetterTailwindcssEnforceConsistentClassOrder::default(),
+        ),
+        RuleEnum::BetterTailwindcssEnforceConsistentImportantPosition(
+            BetterTailwindcssEnforceConsistentImportantPosition::default(),
+        ),
+        RuleEnum::BetterTailwindcssEnforceConsistentLineWrapping(
+            BetterTailwindcssEnforceConsistentLineWrapping::default(),
+        ),
+        RuleEnum::BetterTailwindcssEnforceConsistentVariableSyntax(
+            BetterTailwindcssEnforceConsistentVariableSyntax::default(),
+        ),
+        RuleEnum::BetterTailwindcssEnforceConsistentVariantOrder(
+            BetterTailwindcssEnforceConsistentVariantOrder::default(),
+        ),
+        RuleEnum::BetterTailwindcssEnforceLogicalProperties(
+            BetterTailwindcssEnforceLogicalProperties::default(),
+        ),
+        RuleEnum::BetterTailwindcssEnforceShorthandClasses(
+            BetterTailwindcssEnforceShorthandClasses::default(),
+        ),
+        RuleEnum::BetterTailwindcssNoConflictingClasses(
+            BetterTailwindcssNoConflictingClasses::default(),
+        ),
+        RuleEnum::BetterTailwindcssNoDeprecatedClasses(
+            BetterTailwindcssNoDeprecatedClasses::default(),
+        ),
+        RuleEnum::BetterTailwindcssNoDuplicateClasses(
+            BetterTailwindcssNoDuplicateClasses::default(),
+        ),
+        RuleEnum::BetterTailwindcssNoRestrictedClasses(
+            BetterTailwindcssNoRestrictedClasses::default(),
+        ),
+        RuleEnum::BetterTailwindcssNoUnknownClasses(BetterTailwindcssNoUnknownClasses::default()),
+        RuleEnum::BetterTailwindcssNoUnnecessaryWhitespace(
+            BetterTailwindcssNoUnnecessaryWhitespace::default(),
+        ),
         RuleEnum::ImportConsistentTypeSpecifierStyle(ImportConsistentTypeSpecifierStyle::default()),
         RuleEnum::ImportDefault(ImportDefault::default()),
         RuleEnum::ImportExport(ImportExport::default()),

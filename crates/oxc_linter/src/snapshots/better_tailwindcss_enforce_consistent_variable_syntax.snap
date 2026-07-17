@@ -1,0 +1,17 @@
+---
+source: crates/oxc_linter/src/tester.rs
+---
+
+  ⚠ better_tailwindcss(enforce-consistent-variable-syntax): Incorrect variable syntax: fill-[var(--brand)].
+   ╭─[enforce_consistent_variable_syntax.tsx:1:17]
+ 1 │ <div className="fill-[var(--brand)]" />
+   ·                 ───────────────────
+   ╰────
+  help: Replace `fill-[var(--brand)]` with `fill-(--brand)`.
+
+  ⚠ better_tailwindcss(enforce-consistent-variable-syntax): Incorrect variable syntax: fill-(--brand).
+   ╭─[enforce_consistent_variable_syntax.tsx:1:5]
+ 1 │ cn("fill-(--brand)")
+   ·     ──────────────
+   ╰────
+  help: Replace `fill-(--brand)` with `fill-[var(--brand)]`.

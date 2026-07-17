@@ -1,0 +1,10 @@
+---
+source: crates/oxc_linter/src/tester.rs
+---
+
+  ⚠ better_tailwindcss(enforce-shorthand-classes): Non-shorthand classes detected. Expected w-4 h-4 to be size-4.
+   ╭─[enforce_shorthand_classes.tsx:1:17]
+ 1 │ <div className="w-4 h-4" />
+   ·                 ───
+   ╰────
+  help: Replace longhand utilities with their Tailwind shorthand

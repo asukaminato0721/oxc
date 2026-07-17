@@ -1,5 +1,19 @@
 Rule                                                       |  Calls
 -----------------------------------------------------------+-------
+better_tailwindcss/enforce-canonical-classes               |  64075
+better_tailwindcss/enforce-consistent-class-order          |  64075
+better_tailwindcss/enforce-consistent-important-position   |  64075
+better_tailwindcss/enforce-consistent-line-wrapping        |  64075
+better_tailwindcss/enforce-consistent-variable-syntax      |  64075
+better_tailwindcss/enforce-consistent-variant-order        |  64075
+better_tailwindcss/enforce-logical-properties              |  64075
+better_tailwindcss/enforce-shorthand-classes               |  64075
+better_tailwindcss/no-conflicting-classes                  |  64075
+better_tailwindcss/no-deprecated-classes                   |  64075
+better_tailwindcss/no-duplicate-classes                    |  64075
+better_tailwindcss/no-restricted-classes                   |  64075
+better_tailwindcss/no-unknown-classes                      |  64075
+better_tailwindcss/no-unnecessary-whitespace               |  64075
 eslint/accessor-pairs                                      |  77955
 eslint/array-callback-return                               |  16812
 eslint/arrow-body-style                                    |   2529

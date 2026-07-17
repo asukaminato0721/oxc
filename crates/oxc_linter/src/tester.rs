@@ -314,6 +314,7 @@ pub struct Tester {
     snapshot_suffix: Option<&'static str>,
     current_working_directory: Box<Path>,
     plugins: LintPlugins,
+    tailwind_design_system: Option<crate::TailwindDesignSystemCb>,
 }
 
 impl Tester {
@@ -341,6 +342,7 @@ impl Tester {
             snapshot_suffix: None,
             current_working_directory,
             plugins: LintPlugins::default(),
+            tailwind_design_system: None,
         }
     }
 
@@ -396,6 +398,14 @@ impl Tester {
 
     pub fn with_vitest_plugin(mut self, yes: bool) -> Self {
         self.plugins.set(LintPlugins::VITEST, yes);
+        self
+    }
+
+    pub fn with_tailwind_design_system(
+        mut self,
+        callback: impl Fn(String) -> Result<String, String> + Send + Sync + 'static,
+    ) -> Self {
+        self.tailwind_design_system = Some(Arc::new(Box::new(callback)));
         self
     }
 
@@ -634,7 +644,7 @@ impl Tester {
         }
         let rule = self.find_rule().from_configuration(rule_config.unwrap_or_default()).unwrap();
         let mut external_plugin_store = ExternalPluginStore::default();
-        let linter = Linter::new(
+        let mut linter = Linter::new(
             self.lint_options,
             ConfigStore::new(
                 eslint_config
@@ -662,8 +672,11 @@ impl Tester {
                 external_plugin_store,
             ),
             None,
-        )
-        .with_fix(fix_kind.into());
+        );
+        if let Some(callback) = self.tailwind_design_system.as_ref() {
+            linter = linter.with_tailwind_design_system(Arc::clone(callback));
+        }
+        let linter = linter.with_fix(fix_kind.into());
 
         let path_to_lint = if self.plugins.has_import() {
             assert!(path.is_none(), "import plugin does not support path");

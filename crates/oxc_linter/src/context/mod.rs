@@ -20,6 +20,7 @@ use crate::{
     fixer::{Fix, FixKind, Message, MessageRule, PossibleFixes, RuleFix, RuleFixer},
     frameworks::FrameworkOptions,
 };
+use serde::{Serialize, de::DeserializeOwned};
 
 mod host;
 pub use host::{ContextHost, ContextSubHost, ContextSubHostOptions};
@@ -182,6 +183,63 @@ impl<'a> LintContext<'a> {
     #[inline]
     pub fn settings(&self) -> &OxlintSettings {
         &self.parent.config.settings
+    }
+
+    /// Query Tailwind's project-resolved design system through the JavaScript host.
+    ///
+    /// The npm CLI supplies this bridge. Pure-Rust embedders can inject one with
+    /// [`Linter::with_tailwind_design_system`](crate::Linter::with_tailwind_design_system).
+    pub fn tailwind_query<R: DeserializeOwned>(
+        &self,
+        operation: &'static str,
+        classes: &[&str],
+        options: impl Serialize,
+    ) -> Option<R> {
+        let Some(callback) = self.parent.tailwind_design_system.as_ref() else {
+            self.report_tailwind_error(
+                "no Tailwind design-system host is available for this Oxlint embedding",
+            );
+            return None;
+        };
+        let request = serde_json::json!({
+            "operation": operation,
+            "filePath": self.file_path(),
+            "settings": self.settings(),
+            "classes": classes,
+            "options": options,
+        });
+        let request = match serde_json::to_string(&request) {
+            Ok(request) => request,
+            Err(error) => {
+                self.report_tailwind_error(&format!("could not serialize request: {error}"));
+                return None;
+            }
+        };
+        let response = match callback(request) {
+            Ok(response) => response,
+            Err(error) => {
+                self.report_tailwind_error(&error);
+                return None;
+            }
+        };
+        match serde_json::from_str(&response) {
+            Ok(response) => Some(response),
+            Err(error) => {
+                self.report_tailwind_error(&format!("returned invalid data: {error}"));
+                None
+            }
+        }
+    }
+
+    fn report_tailwind_error(&self, error: &str) {
+        if !self.parent.tailwind_error_reported.replace(true) {
+            self.diagnostic(
+                OxcDiagnostic::warn(format!("Failed to load Tailwind CSS design system: {error}"))
+                    .with_help(
+                        "Install Tailwind CSS in the project and check better-tailwindcss.cwd and entryPoint settings",
+                    ),
+            );
+        }
     }
 
     /// Sets of global variables that have been enabled or disabled.

@@ -1,0 +1,10 @@
+---
+source: crates/oxc_linter/src/tester.rs
+---
+
+  ⚠ better_tailwindcss(enforce-consistent-class-order): Incorrect class order. Expected "text-sm flex p-2" to be "flex p-2 text-sm".
+   ╭─[enforce_consistent_class_order.tsx:1:17]
+ 1 │ <div className="text-sm flex p-2" />
+   ·                 ────────────────
+   ╰────
+  help: Replace `text-sm flex p-2` with `flex p-2 text-sm`.

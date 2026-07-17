@@ -110,6 +110,8 @@ bitflags! {
         const NODE = 1 << 12;
         /// `eslint-plugin-vue`
         const VUE = 1 << 13;
+        /// `eslint-plugin-better-tailwindcss`
+        const BETTER_TAILWINDCSS = 1 << 14;
     }
 }
 
@@ -145,6 +147,12 @@ impl LintPlugins {
     pub fn has_import(self) -> bool {
         self.contains(LintPlugins::IMPORT)
     }
+
+    /// Returns `true` if the better-tailwindcss plugin is enabled.
+    #[inline]
+    pub fn has_better_tailwindcss(self) -> bool {
+        self.contains(LintPlugins::BETTER_TAILWINDCSS)
+    }
 }
 
 impl TryFrom<&str> for LintPlugins {
@@ -175,6 +183,7 @@ impl TryFrom<&str> for LintPlugins {
             "promise" => Ok(LintPlugins::PROMISE),
             "node" => Ok(LintPlugins::NODE),
             "vue" => Ok(LintPlugins::VUE),
+            "better-tailwindcss" | "better_tailwindcss" => Ok(LintPlugins::BETTER_TAILWINDCSS),
             // "eslint" is not really a plugin, so it's 'empty'. This has the added benefit of
             // making it the default value.
             "eslint" => Ok(LintPlugins::ESLINT),
@@ -200,6 +209,7 @@ impl From<LintPlugins> for &'static str {
             LintPlugins::PROMISE => "promise",
             LintPlugins::NODE => "node",
             LintPlugins::VUE => "vue",
+            LintPlugins::BETTER_TAILWINDCSS => "better-tailwindcss",
             _ => "",
         }
     }
@@ -271,6 +281,7 @@ impl JsonSchema for LintPlugins {
             Promise,
             Node,
             Vue,
+            BetterTailwindcss,
         }
 
         let enum_schema = r#gen.subschema_for::<LintPluginOptionsSchema>();
@@ -312,6 +323,10 @@ mod tests {
         assert_eq!(LintPlugins::try_from("react"), Ok(LintPlugins::REACT));
         assert_eq!(LintPlugins::try_from("typescript-eslint"), Ok(LintPlugins::TYPESCRIPT));
         assert_eq!(LintPlugins::try_from("deepscan"), Ok(LintPlugins::OXC));
+        assert_eq!(
+            LintPlugins::try_from("better-tailwindcss"),
+            Ok(LintPlugins::BETTER_TAILWINDCSS)
+        );
         assert_eq!(LintPlugins::try_from("unknown"), Err(()));
     }
 
@@ -319,6 +334,7 @@ mod tests {
     fn test_plugin_to_str() {
         assert_eq!(<&'static str>::from(LintPlugins::REACT), "react");
         assert_eq!(<&'static str>::from(LintPlugins::JEST), "jest");
+        assert_eq!(<&'static str>::from(LintPlugins::BETTER_TAILWINDCSS), "better-tailwindcss");
         assert_eq!(<&'static str>::from(LintPlugins::ESLINT), "");
     }
 

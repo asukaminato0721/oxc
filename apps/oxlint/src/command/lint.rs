@@ -451,6 +451,10 @@ pub struct EnablePlugins {
     /// Enable the vue plugin and detect vue usage problems
     #[bpaf(flag(OverrideToggle::Enable, OverrideToggle::NotSet), hide_usage)]
     pub vue_plugin: OverrideToggle,
+
+    /// Enable the better-tailwindcss plugin and detect Tailwind CSS class problems
+    #[bpaf(flag(OverrideToggle::Enable, OverrideToggle::NotSet), hide_usage)]
+    pub better_tailwindcss_plugin: OverrideToggle,
 }
 
 /// Enables or disables a boolean option, or leaves it unset.
@@ -526,6 +530,8 @@ impl EnablePlugins {
         self.promise_plugin.inspect(|yes| plugins.set(LintPlugins::PROMISE, yes));
         self.node_plugin.inspect(|yes| plugins.set(LintPlugins::NODE, yes));
         self.vue_plugin.inspect(|yes| plugins.set(LintPlugins::VUE, yes));
+        self.better_tailwindcss_plugin
+            .inspect(|yes| plugins.set(LintPlugins::BETTER_TAILWINDCSS, yes));
     }
 }
 
@@ -595,6 +601,19 @@ mod plugins {
         let enable =
             EnablePlugins { vitest_plugin: OverrideToggle::Enable, ..EnablePlugins::default() };
         let expected = LintPlugins::default() | LintPlugins::VITEST;
+
+        enable.apply_overrides(&mut plugins);
+        assert_eq!(plugins, expected);
+    }
+
+    #[test]
+    fn test_override_better_tailwindcss() {
+        let mut plugins = LintPlugins::default();
+        let enable = EnablePlugins {
+            better_tailwindcss_plugin: OverrideToggle::Enable,
+            ..EnablePlugins::default()
+        };
+        let expected = LintPlugins::default() | LintPlugins::BETTER_TAILWINDCSS;
 
         enable.apply_overrides(&mut plugins);
         assert_eq!(plugins, expected);

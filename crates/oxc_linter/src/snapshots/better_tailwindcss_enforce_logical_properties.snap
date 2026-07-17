@@ -1,0 +1,17 @@
+---
+source: crates/oxc_linter/src/tester.rs
+---
+
+  ⚠ better_tailwindcss(enforce-logical-properties): Physical class detected. Replace "ml-2" with logical class "ms-2".
+   ╭─[enforce_logical_properties.tsx:1:17]
+ 1 │ <div className="ml-2 size-4" />
+   ·                 ────
+   ╰────
+  help: Replace `ml-2` with `ms-2`.
+
+  ⚠ better_tailwindcss(enforce-logical-properties): Physical class detected. Replace "size-4" with logical classes "block-4 inline-4".
+   ╭─[enforce_logical_properties.tsx:1:22]
+ 1 │ <div className="ml-2 size-4" />
+   ·                      ──────
+   ╰────
+  help: Replace `size-4` with `block-4 inline-4`.

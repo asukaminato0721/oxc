@@ -1,0 +1,17 @@
+---
+source: crates/oxc_linter/src/tester.rs
+---
+
+  ⚠ better_tailwindcss(enforce-consistent-important-position): Incorrect important position. 'hover:!bg-red-500' should be 'hover:bg-red-500!'.
+   ╭─[enforce_consistent_important_position.tsx:1:17]
+ 1 │ <div className="hover:!bg-red-500" />
+   ·                 ─────────────────
+   ╰────
+  help: Replace `hover:!bg-red-500` with `hover:bg-red-500!`.
+
+  ⚠ better_tailwindcss(enforce-consistent-important-position): Incorrect important position. '-mt-2!' should be '!-mt-2'.
+   ╭─[enforce_consistent_important_position.tsx:1:5]
+ 1 │ cn("-mt-2!")
+   ·     ──────
+   ╰────
+  help: Replace `-mt-2!` with `!-mt-2`.

@@ -156,6 +156,9 @@ impl ServerLinterBuilder {
         let use_cross_module = config_builder.plugins().has_import()
             || (use_nested_config
                 && nested_configs.values().any(|config| config.plugins().has_import()));
+        let use_tailwind_design_system = config_builder.plugins().has_better_tailwindcss()
+            || (use_nested_config
+                && nested_configs.values().any(|config| config.plugins().has_better_tailwindcss()));
 
         extended_paths.extend(config_builder.extended_paths.clone());
         let base_config = config_builder.build(&mut external_plugin_store).unwrap_or_else(|err| {
@@ -163,7 +166,7 @@ impl ServerLinterBuilder {
             ConfigStoreBuilder::empty().build(&mut ExternalPluginStore::new(false)).unwrap()
         });
 
-        if external_plugin_store.is_empty() {
+        if external_plugin_store.is_empty() && !use_tailwind_design_system {
             external_linter = None;
         }
         let config_store = ConfigStore::new(base_config, nested_configs, external_plugin_store);

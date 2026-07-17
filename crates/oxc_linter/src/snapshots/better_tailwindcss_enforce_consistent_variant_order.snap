@@ -1,0 +1,10 @@
+---
+source: crates/oxc_linter/src/tester.rs
+---
+
+  ⚠ better_tailwindcss(enforce-consistent-variant-order): Incorrect variant order. 'hover:dark:block' should be 'dark:hover:block'.
+   ╭─[enforce_consistent_variant_order.tsx:1:17]
+ 1 │ <div className="hover:dark:block" />
+   ·                 ────────────────
+   ╰────
+  help: Replace `hover:dark:block` with `dark:hover:block`.

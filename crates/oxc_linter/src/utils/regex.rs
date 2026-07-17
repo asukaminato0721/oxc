@@ -275,6 +275,7 @@ mod test {
             &allocator,
             LintOptions::default(),
             Arc::default(),
+            None,
         ))
         .spawn_for_test();
 

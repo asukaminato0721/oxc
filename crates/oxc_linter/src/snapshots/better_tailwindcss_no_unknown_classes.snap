@@ -1,0 +1,9 @@
+---
+source: crates/oxc_linter/src/tester.rs
+---
+
+  ⚠ better_tailwindcss(no-unknown-classes): Unknown class detected: typo-class
+   ╭─[no_unknown_classes.tsx:1:22]
+ 1 │ <div className="flex typo-class" />
+   ·                      ──────────
+   ╰────

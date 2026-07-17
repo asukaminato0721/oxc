@@ -1,0 +1,15 @@
+---
+source: crates/oxc_linter/src/tester.rs
+---
+
+  ⚠ better_tailwindcss(no-conflicting-classes): Conflicting class detected: "p-2" and "p-4" apply the same CSS properties: "padding".
+   ╭─[no_conflicting_classes.tsx:1:17]
+ 1 │ <div className="p-2 p-4" />
+   ·                 ───
+   ╰────
+
+  ⚠ better_tailwindcss(no-conflicting-classes): Conflicting class detected: "p-4" and "p-2" apply the same CSS properties: "padding".
+   ╭─[no_conflicting_classes.tsx:1:21]
+ 1 │ <div className="p-2 p-4" />
+   ·                     ───
+   ╰────

@@ -1,0 +1,16 @@
+---
+source: crates/oxc_linter/src/tester.rs
+---
+
+  ⚠ better_tailwindcss(enforce-consistent-line-wrapping): Incorrect line wrapping. Expected ""block hover:flex"" to be "{`
+  │   block
+  │   hover:flex
+  │ `}".
+   ╭─[enforce_consistent_line_wrapping.tsx:1:16]
+ 1 │ <div className="block hover:flex" />
+   ·                ──────────────────
+   ╰────
+  help: Replace `"block hover:flex"` with `{`
+          block
+          hover:flex
+        `}`.

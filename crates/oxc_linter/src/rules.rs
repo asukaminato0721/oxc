@@ -3,6 +3,24 @@
 //! New rules need to be added to these `mod` statements.
 //! Then run `cargo lintgen` to regenerate the RuleEnum and RuleRunnerImpls.
 
+/// <https://github.com/schoero/eslint-plugin-better-tailwindcss>
+pub(crate) mod better_tailwindcss {
+    pub mod enforce_canonical_classes;
+    pub mod enforce_consistent_class_order;
+    pub mod enforce_consistent_important_position;
+    pub mod enforce_consistent_line_wrapping;
+    pub mod enforce_consistent_variable_syntax;
+    pub mod enforce_consistent_variant_order;
+    pub mod enforce_logical_properties;
+    pub mod enforce_shorthand_classes;
+    pub mod no_conflicting_classes;
+    pub mod no_deprecated_classes;
+    pub mod no_duplicate_classes;
+    pub mod no_restricted_classes;
+    pub mod no_unknown_classes;
+    pub mod no_unnecessary_whitespace;
+}
+
 /// <https://github.com/import-js/eslint-plugin-import>
 pub(crate) mod import {
     pub mod consistent_type_specifier_style;

@@ -1,0 +1,38 @@
+---
+source: crates/oxc_linter/src/tester.rs
+---
+
+  ⚠ better_tailwindcss(no-duplicate-classes): Duplicate classname: "rounded".
+   ╭─[no_duplicate_classes.tsx:1:35]
+ 1 │ <div className="rounded underline rounded" />
+   ·                                   ───────
+   ╰────
+  help: Delete this code.
+
+  ⚠ better_tailwindcss(no-duplicate-classes): Duplicate classname: "p-4".
+   ╭─[no_duplicate_classes.tsx:1:19]
+ 1 │ <div class={'p-4  p-4 text-sm'} />
+   ·                   ───
+   ╰────
+  help: Delete this code.
+
+  ⚠ better_tailwindcss(no-duplicate-classes): Duplicate classname: "flex".
+   ╭─[no_duplicate_classes.tsx:1:12]
+ 1 │ clsx("flex flex")
+   ·            ────
+   ╰────
+  help: Delete this code.
+
+  ⚠ better_tailwindcss(no-duplicate-classes): Duplicate classname: "block".
+   ╭─[no_duplicate_classes.tsx:1:15]
+ 1 │ clsx({ "block block": condition })
+   ·               ─────
+   ╰────
+  help: Delete this code.
+
+  ⚠ better_tailwindcss(no-duplicate-classes): Duplicate classname: "px-2".
+   ╭─[no_duplicate_classes.tsx:1:26]
+ 1 │ const classNames = `px-2 px-2`
+   ·                          ────
+   ╰────
+  help: Delete this code.
